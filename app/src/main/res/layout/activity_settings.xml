@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="@dimen/layout_margin"
+        android:layout_marginTop="@dimen/layout_margin"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/button_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:backgroundTint="@color/white"
+            app:icon="@drawable/back"
+            app:iconGravity="textStart"
+            app:iconTint="@color/dark_gray"
+            android:insetBottom="0dp"
+            android:insetTop="0dp"
+            android:stateListAnimator="@null" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/settings"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_size_large"
+            android:paddingVertical="@dimen/padding_vertical"
+            android:paddingStart="12dp"
+            tools:ignore="RtlSymmetry" />
+
+    </LinearLayout>
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/dark_theme"
+        android:textColor="@color/dark_gray"
+        android:textSize="@dimen/text_size_medium"
+        android:paddingVertical="@dimen/padding_vertical"
+        android:paddingStart="@dimen/padding_start"
+        tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/share_app"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_size_medium"
+            android:paddingVertical="@dimen/padding_vertical"
+            android:paddingStart="@dimen/padding_start"
+            tools:ignore="RtlSymmetry" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="@dimen/icon_margin_end"
+                app:srcCompat="@drawable/share"
+                app:tint="@color/icon_tint" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/support"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_size_medium"
+            android:paddingVertical="@dimen/padding_vertical"
+            android:paddingStart="@dimen/padding_start"
+            tools:ignore="RtlSymmetry" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="@dimen/icon_margin_end"
+                app:srcCompat="@drawable/support"
+                app:tint="@color/icon_tint" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/user_agreement"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/text_size_medium"
+            android:paddingVertical="@dimen/padding_vertical"
+            android:paddingStart="@dimen/padding_start"
+            tools:ignore="RtlSymmetry" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="@dimen/icon_margin_end"
+                app:srcCompat="@drawable/arrow"
+                app:tint="@color/icon_tint" />
+        </FrameLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    android:background="@color/settingsBackground"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,15 +18,11 @@
 
         <Button
             android:id="@+id/button_back"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:backgroundTint="@color/white"
+            style="@style/ButtonStyleIconOnly"
             app:icon="@drawable/back"
             app:iconGravity="textStart"
-            app:iconTint="@color/dark_gray"
-            android:insetBottom="0dp"
-            android:insetTop="0dp"
-            android:stateListAnimator="@null" />
+            app:iconTint="@color/settingsIconBack"
+            android:backgroundTint="@color/settingsBackground"/>
 
         <TextView
             android:id="@+id/textView1"
@@ -33,25 +30,22 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:text="@string/settings"
-            android:textColor="@color/dark_gray"
+            android:textColor="@color/settingsText"
             android:textSize="@dimen/text_size_large"
             android:paddingVertical="@dimen/padding_vertical"
             android:paddingStart="12dp"
+            android:fontFamily="@font/ys_display_medium"
             tools:ignore="RtlSymmetry" />
 
     </LinearLayout>
 
     <Switch
         android:id="@+id/switch1"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="24dp"
+        style="@style/SettingsSwitch"
         android:text="@string/dark_theme"
-        android:textColor="@color/dark_gray"
-        android:textSize="@dimen/text_size_medium"
-        android:paddingVertical="@dimen/padding_vertical"
-        android:paddingStart="@dimen/padding_start"
-        tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
+        android:textColor="@color/settingsText"
+        tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -61,14 +55,9 @@
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            style="@style/SettingsTextView"
             android:text="@string/share_app"
-            android:textColor="@color/dark_gray"
-            android:textSize="@dimen/text_size_medium"
-            android:paddingVertical="@dimen/padding_vertical"
-            android:paddingStart="@dimen/padding_start"
+            android:textColor="@color/settingsText"
             tools:ignore="RtlSymmetry" />
 
         <FrameLayout
@@ -82,7 +71,7 @@
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="@dimen/icon_margin_end"
                 app:srcCompat="@drawable/share"
-                app:tint="@color/icon_tint" />
+                app:tint="@color/settingsIcon" />
         </FrameLayout>
     </LinearLayout>
 
@@ -94,14 +83,9 @@
 
         <TextView
             android:id="@+id/textView3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            style="@style/SettingsTextView"
             android:text="@string/support"
-            android:textColor="@color/dark_gray"
-            android:textSize="@dimen/text_size_medium"
-            android:paddingVertical="@dimen/padding_vertical"
-            android:paddingStart="@dimen/padding_start"
+            android:textColor="@color/settingsText"
             tools:ignore="RtlSymmetry" />
 
         <FrameLayout
@@ -115,7 +99,7 @@
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="@dimen/icon_margin_end"
                 app:srcCompat="@drawable/support"
-                app:tint="@color/icon_tint" />
+                app:tint="@color/settingsIcon" />
         </FrameLayout>
     </LinearLayout>
 
@@ -127,14 +111,9 @@
 
         <TextView
             android:id="@+id/textView4"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            style="@style/SettingsTextView"
             android:text="@string/user_agreement"
-            android:textColor="@color/dark_gray"
-            android:textSize="@dimen/text_size_medium"
-            android:paddingVertical="@dimen/padding_vertical"
-            android:paddingStart="@dimen/padding_start"
+            android:textColor="@color/settingsText"
             tools:ignore="RtlSymmetry" />
 
         <FrameLayout
@@ -148,7 +127,7 @@
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="@dimen/icon_margin_end"
                 app:srcCompat="@drawable/arrow"
-                app:tint="@color/icon_tint" />
+                app:tint="@color/settingsIcon" />
         </FrameLayout>
     </LinearLayout>
 

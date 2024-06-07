@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- стиль для кнопок -->
+    <style name="ButtonStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">@dimen/layout_margin_start_end</item>
+        <item name="android:layout_marginEnd">@dimen/layout_margin_start_end</item>
+        <item name="android:layout_marginTop">@dimen/layout_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/layout_margin_bottom</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:paddingVertical">8dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+    </style>
+    <style name="ButtonFontStyle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+    </style>
+    <!-- стиль для кнопки "Назад" в настройках -->
+    <style name="ButtonStyleIconOnly">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:backgroundTint">@color/settingsBackground</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- стиль TextView для настроек -->
+    <style name="SettingsTextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:paddingVertical">@dimen/padding_vertical</item>
+        <item name="android:paddingStart">@dimen/padding_start</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+    </style>
+
+    <!-- стиль Switch для настроек -->
+    <style name="SettingsSwitch">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:paddingVertical">@dimen/padding_vertical</item>
+        <item name="android:paddingStart">@dimen/padding_start</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+    </style>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Цвета для темной темы -->
+    <color name="white">#ffffff</color>
+    <color name="dark_gray">#1A1B22</color>
+    <color name="black">#FF000000</color>
+    <color name="mainBackground">#1A1B22</color>
+    <color name="settingsBackground">#1A1B22</color>
+    <color name="settingsButtonBack">#1A1B22</color>
+    <color name="settingsIcon">#ffffff</color>
+    <color name="settingsText">#ffffff</color>
+    <color name="settingsIconBack">#ffffff</color>
+
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_vertical">10dp</dimen>
+    <dimen name="padding_start">16dp</dimen>
+    <dimen name="icon_margin_end">16dp</dimen>
+    <dimen name="layout_margin">4dp</dimen>
+    <dimen name="text_size_large">22sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="layout_margin_start_end">16dp</dimen>
+    <dimen name="layout_margin_top">16dp</dimen>
+    <dimen name="layout_margin_bottom">28dp</dimen>
+</resources>

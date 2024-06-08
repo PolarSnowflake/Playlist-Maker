@@ -2,7 +2,9 @@ package com.example.playlist_maker
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
@@ -45,5 +47,37 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+
+    }
+
+    // Метод для шеринга приложения
+    fun shareApp(view: View) {
+        val sendIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_text))
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
+    }
+
+    // Метод для написания в поддержку
+    fun writeSupport(view: View) {
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_email_subject))
+            putExtra(Intent.EXTRA_TEXT, getString(R.string.support_email_text))
+        }
+
+        startActivity(Intent.createChooser(emailIntent, getString(R.string.share_intent_title)))
+    }
+
+    // Метод для открытия пользовательского соглашения
+    fun openUserAgreement(view: View) {
+        val userAgreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.user_agreement_url)))
+        startActivity(userAgreementIntent)
     }
 }

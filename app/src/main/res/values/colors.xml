@@ -10,5 +10,8 @@
     <color name="settingsIcon">#AEAFB4</color>
     <color name="settingsText">#1A1B22</color>
     <color name="settingsIconBack">#1A1B22</color>
-
+    <color name="searchBarBackground">#E6E8EB</color>
+    <color name="searchBarTextColor">#1A1B22</color>
+    <color name="searchBarTextColorHint">#CCCCCC</color>
+    <color name="IconClearColor">#1A1B22</color>
 </resources>

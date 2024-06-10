@@ -13,6 +13,8 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var searchBar: EditText
     private lateinit var clearButton: ImageButton
+    private var searchText: String? = null
+    private var cursorPosition: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +28,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
+                searchText = s?.toString()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -39,5 +42,20 @@ class SearchActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             finish()
         }
+
+        // Восстановление состояния
+        if (savedInstanceState != null) {
+            searchText = savedInstanceState.getString("SEARCH_TEXT")
+            cursorPosition = savedInstanceState.getInt("CURSOR_POSITION", 0)
+            searchBar.setText(searchText)
+            searchBar.setSelection(cursorPosition)
+        }
+    }
+
+    // Сохранение состояния
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("SEARCH_TEXT", searchText)
+        outState.putInt("CURSOR_POSITION", searchBar.selectionStart)
     }
 }

@@ -37,7 +37,7 @@
             tools:ignore="RtlSymmetry" />
     </LinearLayout>
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -69,12 +69,11 @@
             android:id="@+id/clear_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
+            android:layout_gravity="end|center_vertical"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/clear_button"
             android:src="@android:drawable/ic_menu_close_clear_cancel"
             android:visibility="gone"
             app:tint="@color/IconClearColor" />
-    </RelativeLayout>
+    </FrameLayout>
 </LinearLayout>

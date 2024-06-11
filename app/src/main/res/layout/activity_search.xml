@@ -70,10 +70,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
+            android:paddingEnd="@dimen/clear_button_padding_end"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/clear_button"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:src="@drawable/clear_button"
             android:visibility="gone"
-            app:tint="@color/IconClearColor" />
+            app:tint="@color/IconClearColor"
+            />
     </FrameLayout>
 </LinearLayout>

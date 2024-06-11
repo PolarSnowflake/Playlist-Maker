@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -36,6 +37,7 @@ class SearchActivity : AppCompatActivity() {
 
         clearButton.setOnClickListener {
             searchBar.text.clear()
+            hideKeyboard()
         }
 
         val backButton: Button = findViewById(R.id.button_back)
@@ -43,7 +45,7 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        // Восстановление состояния
+        // Восстановление состояния при создании активити
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString("SEARCH_TEXT")
             cursorPosition = savedInstanceState.getInt("CURSOR_POSITION", 0)
@@ -57,5 +59,20 @@ class SearchActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putString("SEARCH_TEXT", searchText)
         outState.putInt("CURSOR_POSITION", searchBar.selectionStart)
+    }
+
+    // Восстановление состояния
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        searchText = savedInstanceState.getString("SEARCH_TEXT")
+        cursorPosition = savedInstanceState.getInt("CURSOR_POSITION", 0)
+        searchBar.setText(searchText)
+        searchBar.setSelection(cursorPosition)
+    }
+
+    // Метод для скрытия клавиатуры
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(searchBar.windowToken, 0)
     }
 }

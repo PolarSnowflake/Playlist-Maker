@@ -8,6 +8,7 @@
     <dimen name="text_size_medium">16sp</dimen>
     <dimen name="layout_margin_start_end">16dp</dimen>
     <dimen name="layout_margin_top">16dp</dimen>
-    <dimen name="layout_margin_bottom">28dp</dimen>
+    <dimen name="layout_margin_bottom">16dp</dimen>
     <dimen name="button_corner_radius">16dp</dimen>
+    <dimen name="clear_button_padding_end">16dp</dimen>
 </resources>

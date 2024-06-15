@@ -23,6 +23,8 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val requestOptions =
             RequestOptions().transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.track_image_corner_radius)))
+                .placeholder(R.drawable.placeholder) // Плейсхолдер при загрузке
+                .error(R.drawable.placeholder) // Плейсхолдер при ошибке
 
         Glide.with(itemView)
             .load(track.artworkUrl100)

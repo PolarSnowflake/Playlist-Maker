@@ -15,4 +15,8 @@
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>
     <string name="search_hint">Поиск</string>
     <string name="clear_button">Очистить</string>
+    <string name="update">Обновить</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="no_int">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+
 </resources>

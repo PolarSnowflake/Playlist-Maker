@@ -14,4 +14,7 @@
     <color name="searchBarTextColor">#1A1B22</color>
     <color name="searchBarTextColorHint">#1A1B22</color>
     <color name="IconClearColor">#1A1B22</color>
+    <color name="text_color_searh">#ffffff</color>
+    <color name="arrow_forward_search">#ffffff</color>
+    <color name="trackNameColor">#FFFFFF</color>
 </resources>

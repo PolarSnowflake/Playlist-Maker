@@ -54,7 +54,7 @@
             android:drawablePadding="8dp"
             android:fontFamily="@font/ys_display_regular"
             android:hint="@string/search_hint"
-            android:imeOptions="actionSearch"
+            android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLength="15"
             android:maxLines="1"
@@ -62,6 +62,7 @@
             android:paddingTop="8.5dp"
             android:paddingEnd="48dp"
             android:paddingBottom="8.5dp"
+            android:singleLine="true"
             android:textColor="@color/searchBarTextColor"
             android:textColorHint="@color/searchBarTextColorHint" />
 
@@ -86,4 +87,56 @@
         android:padding="16dp"
         android:visibility="gone"
         tools:listitem="@layout/item_track" />
+
+    <LinearLayout
+        android:id="@+id/error_placeholder_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/placeholderError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="102dp" />
+
+        <TextView
+            android:id="@+id/placeholderMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textAlignment="center"
+            android:textColor="@color/placeholderMessageColor"
+            android:textSize="@dimen/errorMessage" />
+
+        <LinearLayout
+            android:id="@+id/update_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="@dimen/layout_margin_bottom"
+            android:background="@drawable/search_button_update"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/update_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@android:color/transparent"
+                android:clickable="false"
+                android:focusable="false"
+                android:text="@string/update"
+                android:textAllCaps="false"
+                android:textSize="@dimen/update_button_text_size"/>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
+

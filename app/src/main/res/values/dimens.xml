@@ -15,5 +15,6 @@
     <dimen name="track_item_image_size">45dp</dimen>
     <dimen name="text_small_for_search">11sp</dimen>
     <dimen name="track_image_corner_radius">2dp</dimen>
-
+    <dimen name="errorMessage">19sp</dimen>
+    <dimen name="update_button_text_size">14sp</dimen>
 </resources>

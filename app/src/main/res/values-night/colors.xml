@@ -17,4 +17,5 @@
     <color name="text_color_searh">#ffffff</color>
     <color name="arrow_forward_search">#ffffff</color>
     <color name="trackNameColor">#FFFFFF</color>
+    <color name="placeholderMessageColor">#FFFFFF</color>
 </resources>

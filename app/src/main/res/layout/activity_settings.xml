@@ -41,15 +41,9 @@
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/themeSwitcher"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/ys_display_regular"
-        android:paddingVertical="@dimen/padding_vertical"
-        android:paddingStart="@dimen/padding_start"
+        style="@style/SettingsSwitch"
         android:text="@string/dark_theme"
         android:textColor="@color/settingsText"
-        android:textSize="@dimen/text_size_medium"
         tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
     <LinearLayout

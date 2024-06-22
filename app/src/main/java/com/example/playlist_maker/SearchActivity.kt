@@ -87,16 +87,27 @@ class SearchActivity : AppCompatActivity() {
                     recyclerView.visibility = View.GONE
                     hideErrorPlaceholder()
                     hideUpdateButton()
-                    searchHint.visibility = View.VISIBLE
-                    searchHistoryTracks.loadSearchHistory()
+                    searchHint.visibility = View.VISIBLE // Показываем searchHint при пустом тексте
+                    if (searchBar.hasFocus()) {
+                        searchHistoryTracks.loadSearchHistory() // Показываем историю, если есть
+                    }
                 } else {
-                    performSearch(s.toString())
-                    searchHint.visibility = View.GONE
-                    searchHistoryTracks.hideHistory()
+                    searchHistoryTracks.hideHistory() // Скрываем историю при вводе текста
+                    searchHint.visibility = View.GONE // Скрываем searchHint при вводе текста
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    // Дополнительная проверка в afterTextChanged для обработки случая длительного нажатия кнопки "Стереть"
+                    recyclerView.visibility = View.GONE
+                    hideErrorPlaceholder()
+                    hideUpdateButton()
+                    if (searchBar.hasFocus()) {
+                        searchHistoryTracks.loadSearchHistory()
+                    }
+                }
+            }
         })
 
         // Отслеживание состояния фокуса
@@ -115,6 +126,7 @@ class SearchActivity : AppCompatActivity() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSearch(searchBar.text.toString())
                 hideKeyboard()
+                searchHistoryTracks.hideHistory()
                 true
             } else {
                 false
@@ -148,7 +160,33 @@ class SearchActivity : AppCompatActivity() {
             val searchText = savedInstanceState.getString("SEARCH_TEXT")
             searchBar.setText(searchText)
             searchBar.setSelection(searchText?.length ?: 0)
-            searchHint.visibility = if (searchText.isNullOrEmpty()) View.VISIBLE else View.GONE
+            if (searchBar.hasFocus()) {
+                if (searchText.isNullOrEmpty()) {
+                    if (searchHistoryTracks.hasHistory()) {
+                        recyclerView.visibility = View.GONE
+                        hideErrorPlaceholder()
+                        hideUpdateButton()
+                        searchHint.visibility = View.GONE
+                        searchHistoryTracks.loadSearchHistory()
+                    } else {
+                        recyclerView.visibility = View.GONE
+                        hideErrorPlaceholder()
+                        hideUpdateButton()
+                        searchHint.visibility = View.GONE
+                        searchHistoryTracks.hideHistory()
+                    }
+                } else {
+                    performSearch(searchText ?: "")
+                    searchHint.visibility = View.GONE
+                    searchHistoryTracks.hideHistory()
+                }
+            } else {
+                searchHint.visibility = if (searchText.isNullOrEmpty()) View.VISIBLE else View.GONE
+            }
+        }
+
+        if (searchBar.text.isEmpty() && !searchBar.hasFocus()) {
+            searchHistoryTracks.hideHistory()
         }
     }
 
@@ -170,6 +208,7 @@ class SearchActivity : AppCompatActivity() {
     // Выполнение поискового запроса
     private fun performSearch(query: String) {
         lastQuery = query
+        searchHistoryTracks.hideHistory()
         val call = iTunesService.search(query)
         call.enqueue(object : Callback<ItunesSearchResponse> {
             override fun onResponse(
@@ -184,7 +223,6 @@ class SearchActivity : AppCompatActivity() {
                         recyclerView.visibility = View.VISIBLE
                         hideErrorPlaceholder()
                         hideUpdateButton()
-                        searchHistoryTracks.hideHistory() // Скрытие истории при отображении результатов
                     } else {
                         showNoResultsPlaceholder()
                     }
@@ -214,6 +252,7 @@ class SearchActivity : AppCompatActivity() {
         updateButtonLayout.visibility = View.GONE
         placeholderMessage.text = getString(R.string.nothing_found)
         placeholderError.setImageResource(R.drawable.not_found_icon)
+        searchHistoryTracks.hideHistory()
     }
 
     // Плейсхолдер "Ошибка подключения"

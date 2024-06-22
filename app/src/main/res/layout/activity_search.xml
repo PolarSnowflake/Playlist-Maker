@@ -57,7 +57,8 @@
             android:maxLength="15"
             android:maxLines="1"
             android:textColor="@color/searchBarTextColor"
-            android:textColorHint="@color/searchBarTextColorHint" />
+            android:textColorHint="@color/searchBarTextColorHint"
+            android:textCursorDrawable="@drawable/search_cursor_color" />
 
         <TextView
             android:id="@+id/searchHint"

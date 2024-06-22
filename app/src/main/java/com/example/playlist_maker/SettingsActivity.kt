@@ -1,27 +1,37 @@
 package com.example.playlist_maker
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.StateListDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.switchmaterial.SwitchMaterial
 
+
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var themeSwitcher: SwitchMaterial
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        val app = applicationContext as App
+        val sharedPreferences = getSharedPreferences("ThemePrefs", MODE_PRIVATE)
+        val darkThemeEnabled = sharedPreferences.getBoolean("DARK_THEME", false)
 
-        themeSwitcher.isChecked = app.darkTheme
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            app.switchTheme(checked)
+        themeSwitcher = findViewById(R.id.themeSwitcher)
+        themeSwitcher.isChecked = darkThemeEnabled
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            (applicationContext as App).switchTheme(checked)
         }
 
+        //Кнопка "Назад"
         val backButton: Button = findViewById(R.id.button_back)
         backButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)

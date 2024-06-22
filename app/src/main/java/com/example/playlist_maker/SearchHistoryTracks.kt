@@ -62,8 +62,8 @@ class SearchHistoryTracks(
 
     // Загрузка и отображение истории поиска
     fun loadSearchHistory() {
-        val history = getSearchHistory()
-        if (history.isNotEmpty()) {
+        if (hasHistory()) {
+            val history = getSearchHistory()
             historyAdapter.updateTracks(history)
             historyRecyclerView.visibility = View.VISIBLE
             clearHistoryButton.visibility = View.VISIBLE
@@ -71,6 +71,11 @@ class SearchHistoryTracks(
         } else {
             hideHistory()
         }
+    }
+
+    // Проверка наличия истории поиска
+    fun hasHistory(): Boolean {
+        return !getSearchHistory().isEmpty()
     }
 
     // Скрытие элементов UI

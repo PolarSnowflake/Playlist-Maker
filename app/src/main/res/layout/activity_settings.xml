@@ -38,12 +38,13 @@
 
     </LinearLayout>
 
-
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/themeSwitcher"
         style="@style/SettingsSwitch"
         android:text="@string/dark_theme"
         android:textColor="@color/settingsText"
+        app:thumbTint="@color/switch_knob_color"
+        app:trackTint="@color/switch_track_color"
         tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
     <LinearLayout

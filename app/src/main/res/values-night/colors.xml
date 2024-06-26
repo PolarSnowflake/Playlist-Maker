@@ -18,4 +18,8 @@
     <color name="arrow_forward_search">#ffffff</color>
     <color name="trackNameColor">#FFFFFF</color>
     <color name="placeholderMessageColor">#FFFFFF</color>
+    <color name="historySearchClearButtonTextColor">#1A1B22</color>
+    <color name="search_cursor_color">#3772E7</color>
+    <color name="switch_knob_color">#3772E7</color>
+    <color name="switch_track_color">#9FBBF3</color>
 </resources>

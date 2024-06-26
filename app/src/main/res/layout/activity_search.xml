@@ -37,47 +37,51 @@
             tools:ignore="RtlSymmetry" />
     </LinearLayout>
 
-    <FrameLayout
+    <RelativeLayout
+        style="@style/SearchRelativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp">
+        android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/searchBar"
+            style="@style/SearchEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/shape"
             android:backgroundTint="@color/searchBarBackground"
             android:drawableStart="@drawable/search_icon_bar"
-            android:drawablePadding="8dp"
             android:fontFamily="@font/ys_display_regular"
             android:hint="@string/search_hint"
             android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLength="15"
             android:maxLines="1"
-            android:paddingStart="16dp"
-            android:paddingTop="8.5dp"
-            android:paddingEnd="48dp"
-            android:paddingBottom="8.5dp"
-            android:singleLine="true"
             android:textColor="@color/searchBarTextColor"
-            android:textColorHint="@color/searchBarTextColorHint" />
+            android:textColorHint="@color/searchBarTextColorHint"
+            android:textCursorDrawable="@drawable/search_cursor_color" />
+
+        <TextView
+            android:id="@+id/searchHint"
+            style="@style/SearchHintTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/searchBar"
+            android:text="@string/search_hint_text"
+            android:textColor="@color/placeholderMessageColor"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <ImageButton
             android:id="@+id/clear_button"
+            style="@style/ClearButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/clear_button"
             android:paddingEnd="@dimen/clear_button_padding_end"
             android:src="@drawable/clear_button"
             android:visibility="gone"
             app:tint="@color/IconClearColor" />
-    </FrameLayout>
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -90,12 +94,7 @@
 
     <LinearLayout
         android:id="@+id/error_placeholder_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:orientation="vertical"
+        style="@style/ErrorPlaceholderLayout"
         android:visibility="gone">
 
         <ImageView
@@ -127,16 +126,44 @@
 
             <Button
                 android:id="@+id/update_button"
+                style="@style/UpdateButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:background="@android:color/transparent"
-                android:clickable="false"
-                android:focusable="false"
-                android:text="@string/update"
-                android:textAllCaps="false"
-                android:textSize="@dimen/update_button_text_size"/>
+                android:text="@string/update" />
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/HistorySearchLinearLayout"
+        android:visibility="visible"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/searchHistoryHeader"
+            style="@style/SearchHistoryHeaderTextView"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/you_searched"
+            android:textColor="@color/placeholderMessageColor"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerHistoryTracks"
+            style="@style/RecyclerViewHistory"
+            android:layout_width="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/historyClear"
+            style="@style/HistoryClearButton"
+            android:backgroundTint="@color/placeholderMessageColor"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/clear_history"
+            android:textColor="@color/historySearchClearButtonTextColor"
+            android:visibility="gone"
+            app:cornerRadius="54dp"
+            tools:visibility="visible" />
     </LinearLayout>
 </LinearLayout>
 

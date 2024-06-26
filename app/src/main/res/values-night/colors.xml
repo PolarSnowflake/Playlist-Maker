@@ -22,4 +22,11 @@
     <color name="search_cursor_color">#3772E7</color>
     <color name="switch_knob_color">#3772E7</color>
     <color name="switch_track_color">#9FBBF3</color>
+    <color name="player_button_play_inside">#1A1B22</color>
+    <color name="player_button_play_outside">#FFFFFF</color>
+    <color name="player_attr_names">#AEAFB4</color>
+    <color name="player_attr_values">#FFFFFF</color>
+    <color name="player_track_and_album_name">#FFFFFF</color>
+    <color name="ic_add_to_playlist">#535459</color>
+    <color name="ic_play">#FFFFFF</color>
 </resources>

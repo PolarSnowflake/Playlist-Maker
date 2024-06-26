@@ -17,4 +17,14 @@
     <dimen name="track_image_corner_radius">2dp</dimen>
     <dimen name="errorMessage">19sp</dimen>
     <dimen name="update_button_text_size">14sp</dimen>
+    <dimen name="guide_line24">24dp</dimen>
+    <dimen name="guide_line16">16dp</dimen>
+    <dimen name="player_small_button">52dp</dimen>
+    <dimen name="player_big_button">84dp</dimen>
+    <dimen name="player_height">32dp</dimen>
+    <dimen name="player_text_size">12sp</dimen>
+    <dimen name="player_text_size_22sp">22sp</dimen>
+    <dimen name="player_text_size_14sp">14sp</dimen>
+    <dimen name="player_text_size_12sp">12sp</dimen>
+    <dimen name="player_image_corner_radius">8dp</dimen>
 </resources>

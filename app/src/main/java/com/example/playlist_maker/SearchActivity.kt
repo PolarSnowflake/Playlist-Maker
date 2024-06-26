@@ -1,5 +1,6 @@
 package com.example.playlist_maker
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,12 +16,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 
 class SearchActivity : AppCompatActivity() {
 
@@ -65,6 +66,7 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter = TrackAdapter(emptyList()) { track ->  // Начинаем с пустого списка треков
             searchHistoryTracks.addTrackToHistory(track)
             searchHistoryTracks.hideHistory()
+            startPlayerActivity(track)
         }
 
         recyclerView.adapter = trackAdapter
@@ -77,6 +79,11 @@ class SearchActivity : AppCompatActivity() {
             findViewById(R.id.searchHistoryHeader)
         )
 
+        // Слушатель для истории поиска
+        searchHistoryTracks.setOnItemClickListener { track ->
+            startPlayerActivity(track)
+        }
+
         // Настройка событий для поиска
         searchBar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -85,6 +92,7 @@ class SearchActivity : AppCompatActivity() {
                 clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 if (s.isNullOrEmpty()) {
                     recyclerView.visibility = View.GONE
+                    trackAdapter.updateTracks(emptyList())
                     hideErrorPlaceholder()
                     hideUpdateButton()
                     searchHint.visibility = View.VISIBLE // Показываем searchHint при пустом тексте
@@ -94,6 +102,7 @@ class SearchActivity : AppCompatActivity() {
                 } else {
                     searchHistoryTracks.hideHistory() // Скрываем историю при вводе текста
                     searchHint.visibility = View.GONE // Скрываем searchHint при вводе текста
+                    performSearch(s.toString())
                 }
             }
 
@@ -101,6 +110,7 @@ class SearchActivity : AppCompatActivity() {
                 if (s.isNullOrEmpty()) {
                     // Дополнительная проверка в afterTextChanged для обработки случая длительного нажатия кнопки "Стереть"
                     recyclerView.visibility = View.GONE
+                    trackAdapter.updateTracks(emptyList())
                     hideErrorPlaceholder()
                     hideUpdateButton()
                     if (searchBar.hasFocus()) {
@@ -138,6 +148,7 @@ class SearchActivity : AppCompatActivity() {
             searchBar.text.clear()
             hideKeyboard()
             recyclerView.visibility = View.GONE
+            trackAdapter.updateTracks(emptyList())
             hideErrorPlaceholder()
             hideUpdateButton()
             searchHint.visibility = View.VISIBLE // Показываем searchHint после очистки текста
@@ -157,11 +168,11 @@ class SearchActivity : AppCompatActivity() {
 
         // Восстановление состояния при создании активити
         if (savedInstanceState != null) {
-            val searchText = savedInstanceState.getString("SEARCH_TEXT")
-            searchBar.setText(searchText)
-            searchBar.setSelection(searchText?.length ?: 0)
+            lastQuery = savedInstanceState.getString("last_query", "")
+            searchBar.setText(lastQuery)
+            searchBar.setSelection(lastQuery.length)
             if (searchBar.hasFocus()) {
-                if (searchText.isNullOrEmpty()) {
+                if (lastQuery.isEmpty()) {
                     if (searchHistoryTracks.hasHistory()) {
                         recyclerView.visibility = View.GONE
                         hideErrorPlaceholder()
@@ -176,18 +187,43 @@ class SearchActivity : AppCompatActivity() {
                         searchHistoryTracks.hideHistory()
                     }
                 } else {
-                    performSearch(searchText ?: "")
+                    performSearch(lastQuery)
                     searchHint.visibility = View.GONE
                     searchHistoryTracks.hideHistory()
                 }
             } else {
-                searchHint.visibility = if (searchText.isNullOrEmpty()) View.VISIBLE else View.GONE
+                searchHint.visibility = if (lastQuery.isEmpty()) View.VISIBLE else View.GONE
             }
         }
 
         if (searchBar.text.isEmpty() && !searchBar.hasFocus()) {
             searchHistoryTracks.hideHistory()
         }
+
+        // Проверка наличия трека в SharedPreferences
+        val sharedPreferences = getSharedPreferences("player_prefs", MODE_PRIVATE)
+        val trackJson = sharedPreferences.getString("current_track", null)
+        if (trackJson != null) {
+            val track = Gson().fromJson(trackJson, Track::class.java)
+            val intent = Intent(this, PlayerActivity::class.java)
+            intent.putExtra("track", track)
+            startActivity(intent)
+        }
+    }
+
+    // Сохр текущего трека в SharedPreferences при паузе активности
+    override fun onPause() {
+        super.onPause()
+        val sharedPreferences = getSharedPreferences("player_prefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val track = intent.getSerializableExtra("track") as? Track
+        if (track != null) {
+            val trackJson = Gson().toJson(track)
+            editor.putString("current_track", trackJson)
+        } else {
+            editor.remove("current_track")
+        }
+        editor.apply()
     }
 
     // Сохранение состояния
@@ -281,5 +317,12 @@ class SearchActivity : AppCompatActivity() {
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(searchBar.windowToken, 0)
+    }
+
+    // Переход на PlayerActivity
+    private fun startPlayerActivity(track: Track) {
+        val intent = Intent(this@SearchActivity, PlayerActivity::class.java)
+        intent.putExtra("track", track)
+        startActivity(intent)
     }
 }

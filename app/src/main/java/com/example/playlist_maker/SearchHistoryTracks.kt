@@ -1,6 +1,7 @@
 package com.example.playlist_maker
 
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,14 +19,17 @@ class SearchHistoryTracks(
     private val sharedPreferences =
         context.getSharedPreferences("search_history", Context.MODE_PRIVATE)
     private val historyAdapter: TrackAdapter
+    private var onItemClickListener: ((Track) -> Unit)? = null
 
     init {
         historyAdapter = TrackAdapter(emptyList()) { track ->
             addTrackToHistory(track)
+            startPlayerActivity(track)
         }
         historyRecyclerView.adapter = historyAdapter
         historyRecyclerView.layoutManager = LinearLayoutManager(context)
 
+        // Кнопка "Очистить историю"
         clearHistoryButton.setOnClickListener {
             clearHistory()
         }
@@ -89,5 +93,17 @@ class SearchHistoryTracks(
     private fun clearHistory() {
         saveSearchHistory(emptyList())
         hideHistory()
+    }
+
+    // Слушатель для кликов по трекам в истории
+    fun setOnItemClickListener(listener: (Track) -> Unit) {
+        this.onItemClickListener = listener
+    }
+
+    // Переход на PlayerActivity при выборе трека из истории
+    private fun startPlayerActivity(track: Track) {
+        val intent = Intent(context, PlayerActivity::class.java)
+        intent.putExtra("track", track)
+        context.startActivity(intent)
     }
 }

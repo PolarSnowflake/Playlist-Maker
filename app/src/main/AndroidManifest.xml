@@ -27,6 +27,11 @@
             android:label="@string/search"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
         </activity>
+        <activity android:name=".PlayerActivity"
+            android:label="@string/player"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+            android:launchMode="singleTop">
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">

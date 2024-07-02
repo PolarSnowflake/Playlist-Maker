@@ -129,7 +129,7 @@
                 app:layout_constraintStart_toStartOf="@id/left_guide_line24"
                 app:layout_constraintTop_toTopOf="@id/button_play" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <ImageButton
                 android:id="@+id/button_play"
                 android:layout_width="@dimen/player_big_button"
                 android:layout_height="@dimen/player_big_button"
@@ -137,12 +137,12 @@
                 android:backgroundTint="@color/player_button_play_inside"
                 android:elevation="0dp"
                 android:src="@drawable/play"
-                android:tint="@color/player_button_play_outside"
                 app:fabCustomSize="@dimen/player_big_button"
                 app:layout_constraintBottom_toTopOf="@id/current_time"
                 app:layout_constraintEnd_toStartOf="@id/like_button"
                 app:layout_constraintStart_toEndOf="@id/add_to_playlist"
-                app:maxImageSize="@dimen/player_big_button" />
+                app:maxImageSize="@dimen/player_big_button"
+                app:tint="@color/player_button_play_outside" />
 
             <ImageButton
                 android:id="@+id/like_button"
@@ -217,6 +217,7 @@
                 android:textSize="@dimen/player_text_size_12sp"
                 app:layout_constraintBaseline_toBaselineOf="@id/text_album"
                 app:layout_constraintEnd_toStartOf="@id/right_guide_line16"
+                app:layout_constraintStart_toEndOf="@id/text_album"
                 tools:text="Yesterday (Remastered 2009)" />
 
             <TextView

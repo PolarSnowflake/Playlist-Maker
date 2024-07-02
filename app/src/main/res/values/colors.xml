@@ -13,7 +13,7 @@
     <color name="searchBarBackground">#E6E8EB</color>
     <color name="searchBarTextColor">#1A1B22</color>
     <color name="searchBarTextColorHint">#CCCCCC</color>
-    <color name="IconClearColor">#1A1B22</color>
+    <color name="IconClearColor">#AEAFB4</color>
     <color name="text_color_searh">#AEAFB4</color>
     <color name="arrow_forward_search">#AEAFB4</color>
     <color name="trackNameColor">#000000</color>
@@ -27,6 +27,6 @@
     <color name="player_attr_names">#AEAFB4</color>
     <color name="player_attr_values">#1A1B22</color>
     <color name="player_track_and_album_name">#1A1B22</color>
-    <color name="ic_add_to_playlist">#C5C6C7</color>
+    <color name="ic_add_to_playlist">#1A1B22</color>
     <color name="ic_play">#1A1B22</color>
 </resources>

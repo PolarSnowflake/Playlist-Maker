@@ -27,6 +27,6 @@
     <color name="player_attr_names">#AEAFB4</color>
     <color name="player_attr_values">#FFFFFF</color>
     <color name="player_track_and_album_name">#FFFFFF</color>
-    <color name="ic_add_to_playlist">#535459</color>
+    <color name="ic_add_to_playlist">#FFFFFF</color>
     <color name="ic_play">#FFFFFF</color>
 </resources>

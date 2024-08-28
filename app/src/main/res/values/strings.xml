@@ -21,4 +21,10 @@
     <string name="you_searched">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
     <string name="search_hint_text">Введите название трека или исполнителя</string>
+    <string name="player">Плеер</string>
+    <string name="player_duration">Длительность</string>
+    <string name="player_album">Альбом</string>
+    <string name="player_year">Год</string>
+    <string name="player_genre">Жанр</string>
+    <string name="player_country">Страна</string>
 </resources>

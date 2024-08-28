@@ -2,6 +2,8 @@ package com.example.playlist_maker
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -37,7 +39,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var updateButton: Button
     private lateinit var searchHistoryTracks: SearchHistoryTracks
     private lateinit var searchHint: TextView
+    private lateinit var progressBarScreen: LinearLayout
     private var lastQuery: String = ""
+
+    // Debounce handler
+    private val handler = Handler(Looper.getMainLooper())
+    private var searchRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,14 +66,19 @@ class SearchActivity : AppCompatActivity() {
         updateButtonLayout = findViewById(R.id.update_button_layout)
         updateButton = findViewById(R.id.update_button)
         searchHint = findViewById(R.id.searchHint)
+        progressBarScreen = findViewById(R.id.progressBarLayout)
 
         recyclerView.visibility = View.GONE
         errorPlaceholderLayout.visibility = View.GONE
+        progressBarScreen.visibility = View.GONE
 
         trackAdapter = TrackAdapter(emptyList()) { track ->  // Начинаем с пустого списка треков
-            searchHistoryTracks.addTrackToHistory(track)
-            searchHistoryTracks.hideHistory()
-            startPlayerActivity(track)
+            handler.removeCallbacksAndMessages(null)
+            handler.postDelayed({
+                searchHistoryTracks.addTrackToHistory(track)
+                searchHistoryTracks.hideHistory()
+                startPlayerActivity(track)
+            }, 300)
         }
 
         recyclerView.adapter = trackAdapter
@@ -241,16 +253,27 @@ class SearchActivity : AppCompatActivity() {
         searchHint.visibility = if (searchText.isNullOrEmpty()) View.VISIBLE else View.GONE
     }
 
+    // Выполнение поискового запроса с задержкой (debounce)
+    private fun debounceSearch(query: String) {
+        searchRunnable?.let { handler.removeCallbacks(it) }
+        searchRunnable = Runnable {
+            performSearch(query)
+        }
+        handler.postDelayed(searchRunnable!!, 2000)  // Задержка 2 секунды
+    }
+
     // Выполнение поискового запроса
     private fun performSearch(query: String) {
         lastQuery = query
         searchHistoryTracks.hideHistory()
+        progressBarScreen.visibility = View.VISIBLE
         val call = iTunesService.search(query)
         call.enqueue(object : Callback<ItunesSearchResponse> {
             override fun onResponse(
                 call: Call<ItunesSearchResponse>,
                 response: Response<ItunesSearchResponse>
             ) {
+                progressBarScreen.visibility = View.GONE
                 if (response.isSuccessful) {
                     val searchResponse = response.body()
                     if (searchResponse != null && searchResponse.results.isNotEmpty()) {
@@ -268,6 +291,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<ItunesSearchResponse>, t: Throwable) {
+                progressBarScreen.visibility = View.GONE
                 showErrorPlaceholder()
             }
         })

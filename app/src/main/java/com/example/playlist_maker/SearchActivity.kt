@@ -2,8 +2,11 @@ package com.example.playlist_maker
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -37,7 +40,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var updateButton: Button
     private lateinit var searchHistoryTracks: SearchHistoryTracks
     private lateinit var searchHint: TextView
+    private lateinit var progressBarScreen: LinearLayout
     private var lastQuery: String = ""
+
+    // Debounce handler
+    private val handler = Handler(Looper.getMainLooper())
+    private var searchRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,14 +67,19 @@ class SearchActivity : AppCompatActivity() {
         updateButtonLayout = findViewById(R.id.update_button_layout)
         updateButton = findViewById(R.id.update_button)
         searchHint = findViewById(R.id.searchHint)
+        progressBarScreen = findViewById(R.id.progressBarLayout)
 
         recyclerView.visibility = View.GONE
         errorPlaceholderLayout.visibility = View.GONE
+        progressBarScreen.visibility = View.GONE
 
         trackAdapter = TrackAdapter(emptyList()) { track ->  // Начинаем с пустого списка треков
-            searchHistoryTracks.addTrackToHistory(track)
-            searchHistoryTracks.hideHistory()
-            startPlayerActivity(track)
+            handler.removeCallbacksAndMessages(null)
+            handler.postDelayed({
+                searchHistoryTracks.addTrackToHistory(track)
+                searchHistoryTracks.hideHistory()
+                startPlayerActivity(track)
+            }, 300)
         }
 
         recyclerView.adapter = trackAdapter
@@ -102,7 +115,8 @@ class SearchActivity : AppCompatActivity() {
                 } else {
                     searchHistoryTracks.hideHistory() // Скрываем историю при вводе текста
                     searchHint.visibility = View.GONE // Скрываем searchHint при вводе текста
-                    performSearch(s.toString())
+                    progressBarScreen.visibility = View.VISIBLE
+                    debounceSearch(s.toString())
                 }
             }
 
@@ -125,6 +139,7 @@ class SearchActivity : AppCompatActivity() {
             if (hasFocus && searchBar.text.isEmpty()) {
                 searchHint.visibility = View.VISIBLE
                 searchHistoryTracks.loadSearchHistory()
+                recyclerView.visibility = View.GONE
             } else {
                 searchHint.visibility = View.GONE
                 searchHistoryTracks.hideHistory()
@@ -241,33 +256,55 @@ class SearchActivity : AppCompatActivity() {
         searchHint.visibility = if (searchText.isNullOrEmpty()) View.VISIBLE else View.GONE
     }
 
+    // Выполнение поискового запроса с задержкой (debounce)
+    private fun debounceSearch(query: String) {
+        searchRunnable?.let { handler.removeCallbacks(it) }
+        searchRunnable = Runnable {
+            performSearch(query)
+        }
+        searchRunnable?.let { runnable ->
+            handler.postDelayed(runnable, 2000) // Задержка 2 секунды
+        }
+    }
+
     // Выполнение поискового запроса
     private fun performSearch(query: String) {
         lastQuery = query
         searchHistoryTracks.hideHistory()
+
+        hideErrorPlaceholder()
+        hideUpdateButton()
+        recyclerView.visibility = View.GONE
+        //progressBarScreen.visibility = View.VISIBLE
+
         val call = iTunesService.search(query)
         call.enqueue(object : Callback<ItunesSearchResponse> {
             override fun onResponse(
                 call: Call<ItunesSearchResponse>,
                 response: Response<ItunesSearchResponse>
             ) {
+                progressBarScreen.visibility = View.GONE
                 if (response.isSuccessful) {
                     val searchResponse = response.body()
                     if (searchResponse != null && searchResponse.results.isNotEmpty()) {
                         val tracks = searchResponse.results
                         trackAdapter.updateTracks(tracks)
                         recyclerView.visibility = View.VISIBLE
+                        Log.d("NOTNULL", "isSuccessful")
                         hideErrorPlaceholder()
                         hideUpdateButton()
                     } else {
                         showNoResultsPlaceholder()
+                        Log.d("NoResultsPlaceholder", "isSuccessful")
                     }
                 } else {
                     showErrorPlaceholder()
+                    Log.d("ErrorPlaceholder", "NOTSuccessful")
                 }
             }
 
             override fun onFailure(call: Call<ItunesSearchResponse>, t: Throwable) {
+                progressBarScreen.visibility = View.GONE
                 showErrorPlaceholder()
             }
         })
@@ -301,6 +338,7 @@ class SearchActivity : AppCompatActivity() {
         updateButtonLayout.visibility = View.VISIBLE
         placeholderMessage.text = getString(R.string.no_int)
         placeholderError.setImageResource(R.drawable.no_int_icon)
+        searchHistoryTracks.hideHistory()
     }
 
     // Скрытие плейсхолдера ошибки

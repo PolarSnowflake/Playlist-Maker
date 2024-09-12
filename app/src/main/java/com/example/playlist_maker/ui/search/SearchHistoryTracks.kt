@@ -1,10 +1,13 @@
-package com.example.playlist_maker
+package com.example.playlist_maker.ui.search
 
 import android.content.Context
 import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlist_maker.domain.models.Track
+import com.example.playlist_maker.ui.adapters.TrackAdapter
+import com.example.playlist_maker.ui.player.PlayerActivity
 import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

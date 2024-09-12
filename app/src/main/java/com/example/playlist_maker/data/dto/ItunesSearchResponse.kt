@@ -1,5 +1,6 @@
-package com.example.playlist_maker
+package com.example.playlist_maker.data.dto
 
+import com.example.playlist_maker.domain.models.Track
 import com.google.gson.annotations.SerializedName
 
 data class ItunesSearchResponse(

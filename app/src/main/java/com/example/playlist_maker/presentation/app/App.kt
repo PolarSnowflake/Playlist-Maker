@@ -1,8 +1,7 @@
-package com.example.playlist_maker
+package com.example.playlist_maker.presentation.app
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
 

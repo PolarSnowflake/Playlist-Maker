@@ -1,16 +1,14 @@
-package com.example.playlist_maker
+package com.example.playlist_maker.ui.settings
 
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.StateListDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import com.example.playlist_maker.R
+import com.example.playlist_maker.presentation.app.App
+import com.example.playlist_maker.ui.main.MainActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 

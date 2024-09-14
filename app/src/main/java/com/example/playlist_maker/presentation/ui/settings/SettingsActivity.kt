@@ -1,4 +1,4 @@
-package com.example.playlist_maker.ui.settings
+package com.example.playlist_maker.presentation.ui.settings
 
 import android.content.Intent
 import android.net.Uri
@@ -8,7 +8,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlist_maker.R
 import com.example.playlist_maker.presentation.app.App
-import com.example.playlist_maker.ui.main.MainActivity
+import com.example.playlist_maker.presentation.ui.main.MainActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 

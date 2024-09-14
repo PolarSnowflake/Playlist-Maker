@@ -1,4 +1,4 @@
-package com.example.playlist_maker.ui.main
+package com.example.playlist_maker.presentation.ui.main
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlist_maker.R
-import com.example.playlist_maker.ui.player.MediatekaActivity
-import com.example.playlist_maker.ui.search.SearchActivity
-import com.example.playlist_maker.ui.settings.SettingsActivity
+import com.example.playlist_maker.presentation.ui.player.MediatekaActivity
+import com.example.playlist_maker.presentation.ui.search.SearchActivity
+import com.example.playlist_maker.presentation.ui.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 

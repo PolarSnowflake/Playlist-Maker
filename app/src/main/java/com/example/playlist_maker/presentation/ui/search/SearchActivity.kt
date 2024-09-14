@@ -1,4 +1,4 @@
-package com.example.playlist_maker.ui.search
+package com.example.playlist_maker.presentation.ui.search
 
 import android.content.Intent
 import android.os.Bundle
@@ -22,10 +22,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlist_maker.R
 import com.example.playlist_maker.data.dto.ItunesSearchResponse
 import com.example.playlist_maker.data.network.iTunesAPI
+import com.example.playlist_maker.domain.api.SearchTracksInteractor
 import com.example.playlist_maker.domain.models.Track
 import com.example.playlist_maker.presentation.Creator
-import com.example.playlist_maker.ui.adapters.TrackAdapter
-import com.example.playlist_maker.ui.player.PlayerActivity
+import com.example.playlist_maker.presentation.ui.adapters.TrackAdapter
+import com.example.playlist_maker.presentation.ui.player.PlayerActivity
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -37,7 +38,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearButton: ImageButton
     private lateinit var recyclerView: RecyclerView
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var iTunesService: iTunesAPI
+    private lateinit var searchInteractor: SearchTracksInteractor
     private lateinit var placeholderError: ImageView
     private lateinit var placeholderMessage: TextView
     private lateinit var errorPlaceholderLayout: LinearLayout
@@ -90,7 +91,8 @@ class SearchActivity : AppCompatActivity() {
             findViewById(R.id.searchHistoryHeader)
         )
 
-        iTunesService = Creator.createITunesAPI()
+        // Интерактор через Creator
+        searchInteractor = Creator.provideSearchTracksInteractor()
 
         // Настройка событий для поиска
         searchBar.addTextChangedListener(object : TextWatcher {
@@ -256,9 +258,6 @@ class SearchActivity : AppCompatActivity() {
         // Отменяем предыдущий запрос, если он ещё не выполнен
         searchRunnable?.let { handler.removeCallbacks(it) }
 
-        // Показываем прогресс-бар при запуске нового поиска
-        progressBarScreen.visibility = View.VISIBLE
-
         // Создаём новый запрос с задержкой
         searchRunnable = Runnable {
             // Вызываем метод performSearch для выполнения поиска
@@ -280,38 +279,27 @@ class SearchActivity : AppCompatActivity() {
         hideUpdateButton()
         recyclerView.visibility = View.GONE
 
-        val call = iTunesService.search(query)
-        call.enqueue(object : Callback<ItunesSearchResponse> {
-            override fun onResponse(
-                call: Call<ItunesSearchResponse>,
-                response: Response<ItunesSearchResponse>
-            ) {
+        progressBarScreen.visibility = View.VISIBLE
+
+        searchInteractor.searchTracks(query) { result ->
+            runOnUiThread {
                 progressBarScreen.visibility = View.GONE
-                if (response.isSuccessful) {
-                    val searchResponse = response.body()
-                    if (searchResponse != null && searchResponse.results.isNotEmpty()) {
-                        val tracks = searchResponse.results
+                if (result.isSuccess) {
+                    val tracks = result.getOrNull()
+                    if (!tracks.isNullOrEmpty()) {
                         trackAdapter.updateTracks(tracks)
                         recyclerView.visibility = View.VISIBLE
-                        Log.d("NOTNULL", "isSuccessful")
                         hideErrorPlaceholder()
                         hideUpdateButton()
-                    } else {
-                        showNoResultsPlaceholder()
-                        Log.d("NoResultsPlaceholder", "isSuccessful")
-                    }
                 } else {
-                    showErrorPlaceholder()
-                    Log.d("ErrorPlaceholder", "NOTSuccessful")
+                    showNoResultsPlaceholder()  // Плейсхолдер "Ничего не найдено"
                 }
-            }
-
-            override fun onFailure(call: Call<ItunesSearchResponse>, t: Throwable) {
-                progressBarScreen.visibility = View.GONE
-                showErrorPlaceholder()
-            }
-        })
+            } else {
+            showErrorPlaceholder()  // Плейсхолдер ошибки
+        }
+        }
     }
+}
 
     // Повтор последнего неудавшегося запроса
     private fun retryLastSearch() {

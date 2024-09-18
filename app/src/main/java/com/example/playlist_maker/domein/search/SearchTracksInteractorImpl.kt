@@ -1,6 +1,6 @@
 package com.example.playlist_maker.domein.search
 
-import com.example.playlist_maker.data.player.Track
+import com.example.playlist_maker.domein.player.Track
 import com.example.playlist_maker.domein.player.TrackRepository
 
 class SearchTracksInteractorImpl(

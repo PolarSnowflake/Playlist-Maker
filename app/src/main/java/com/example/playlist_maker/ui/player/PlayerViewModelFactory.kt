@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlist_maker.creator.Creator
-import com.example.playlist_maker.data.player.Track
+import com.example.playlist_maker.domein.player.Track
 
 class PlayerViewModelFactory(
     private val track: Track,

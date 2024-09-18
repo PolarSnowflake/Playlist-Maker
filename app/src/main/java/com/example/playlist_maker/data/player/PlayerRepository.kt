@@ -1,6 +1,8 @@
-package com.example.playlist_maker.domein.player
+package com.example.playlist_maker.data.player
 
-interface PlayPauseInteractor {
+import com.example.playlist_maker.domein.player.Track
+
+interface PlayerRepository {
     fun preparePlayer(track: Track, onTimeUpdate: (String) -> Unit, onCompletion: () -> Unit)
     fun play(onTimeUpdate: (String) -> Unit)
     fun pause()

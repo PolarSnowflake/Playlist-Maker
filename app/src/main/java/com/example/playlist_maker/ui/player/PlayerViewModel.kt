@@ -3,7 +3,8 @@ package com.example.playlist_maker.ui.player
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlist_maker.data.player.Track
+import com.example.playlist_maker.data.player.PlayerState
+import com.example.playlist_maker.domein.player.Track
 import com.example.playlist_maker.domein.player.PlayPauseInteractor
 
 class PlayerViewModel(
@@ -11,17 +12,15 @@ class PlayerViewModel(
     private val playPauseInteractor: PlayPauseInteractor
 ) : ViewModel() {
 
-    private val _isPlaying = MutableLiveData<Boolean>()
-    val isPlaying: LiveData<Boolean> get() = _isPlaying
-
-    private val _currentPlayTime = MutableLiveData<String>()
-    val currentPlayTime: LiveData<String> get() = _currentPlayTime
-
-    private val _trackData = MutableLiveData<Track>()
-    val trackData: LiveData<Track> get() = _trackData
+    private val _playerState = MutableLiveData<PlayerState>()
+    val playerState: LiveData<PlayerState> get() = _playerState
 
     init {
-        _trackData.value = track
+        _playerState.value = PlayerState(
+            isPlaying = false,
+            currentPlayTime = "00:00",
+            track = track
+        )
         preparePlayer()
     }
 
@@ -32,34 +31,38 @@ class PlayerViewModel(
 
     // Обработка нажатия Play/Pause
     fun onPlayPauseClicked() {
+        val currentState = _playerState.value ?: return
+
         if (playPauseInteractor.isPlaying()) {
             playPauseInteractor.pause()
-            _isPlaying.value = false
+            _playerState.value = currentState.copy(isPlaying = false)
         } else {
             if (playPauseInteractor.hasReachedEnd()) {
                 playPauseInteractor.seekToStart()
             }
             playPauseInteractor.play(::updatePlayTime)
-            _isPlaying.value = true
+            _playerState.value = currentState.copy(isPlaying = true)
         }
     }
 
-    // Обновление времени воспр.
+    // Обновление времени воспроизведения
     private fun updatePlayTime(formattedTime: String) {
-        _currentPlayTime.postValue(formattedTime)
+        val currentState = _playerState.value ?: return
+        _playerState.postValue(currentState.copy(currentPlayTime = formattedTime))
     }
 
     // Завершение трека
     private fun onTrackComplete() {
-        _isPlaying.postValue(false)
-        _currentPlayTime.postValue("00:00") // Сброс времени
+        val currentState = _playerState.value ?: return
+        _playerState.postValue(currentState.copy(isPlaying = false, currentPlayTime = "00:00"))
     }
 
     // Пауза
     fun onPause() {
         if (playPauseInteractor.isPlaying()) {
             playPauseInteractor.pause()
-            _isPlaying.value = false
+            val currentState = _playerState.value ?: return
+            _playerState.value = currentState.copy(isPlaying = false)
         }
     }
 

@@ -3,13 +3,13 @@ package com.example.playlist_maker.ui.search
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlist_maker.data.search.SearchHistoryRepository
-import com.example.playlist_maker.data.player.Track
+import com.example.playlist_maker.domein.player.Track
+import com.example.playlist_maker.domein.search.SearchHistoryInteractor
 import com.example.playlist_maker.domein.search.SearchTracksInteractor
 
 class SearchViewModel(
     private val searchTracksInteractor: SearchTracksInteractor,
-    private val searchHistoryRepository: SearchHistoryRepository
+    private val searchHistoryInteractor: SearchHistoryInteractor
 ) : ViewModel() {
 
     private val _searchResults = MutableLiveData<List<Track>>()
@@ -44,17 +44,16 @@ class SearchViewModel(
     }
 
     fun loadSearchHistory() {
-        _searchHistory.value = searchHistoryRepository.getSearchHistory()
+        _searchHistory.value = searchHistoryInteractor.getSearchHistory()
     }
 
     fun addTrackToHistory(track: Track) {
-        searchHistoryRepository.addTrackToHistory(track)
+        searchHistoryInteractor.addTrackToHistory(track)
         loadSearchHistory()
     }
 
     fun clearSearchHistory() {
-        searchHistoryRepository.clearSearchHistory()
+        searchHistoryInteractor.clearSearchHistory()
         loadSearchHistory()
     }
-
 }

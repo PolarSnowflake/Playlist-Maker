@@ -8,6 +8,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlist_maker.R
+import com.example.playlist_maker.creator.Creator
 import com.example.playlist_maker.data.settings.SharedPreferencesRepository
 import com.example.playlist_maker.ui.main.MainActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -22,9 +23,9 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        // ViewModel
-        val sharedPreferencesRepository = SharedPreferencesRepository(application)
-        viewModel = ViewModelProvider(this, SettingsViewModelFactory(sharedPreferencesRepository))
+        // Интерактор через Creator
+        val settingsInteractor = Creator.provideSettingsInteractor(application)
+        viewModel = ViewModelProvider(this, SettingsViewModelFactory(settingsInteractor))
             .get(SettingsViewModel::class.java)
 
         themeSwitcher = findViewById(R.id.themeSwitcher)

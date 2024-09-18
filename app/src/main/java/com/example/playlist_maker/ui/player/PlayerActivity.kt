@@ -11,7 +11,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlist_maker.R
-import com.example.playlist_maker.data.player.Track
+import com.example.playlist_maker.data.player.PlayerState
+import com.example.playlist_maker.domein.player.Track
 
 
 class PlayerActivity : AppCompatActivity() {
@@ -33,23 +34,15 @@ class PlayerActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, PlayerViewModelFactory(track, application))
             .get(PlayerViewModel::class.java)
 
-        // Изменение состояния воспр.
-        viewModel.isPlaying.observe(this) { isPlaying ->
-            if (isPlaying) {
+        viewModel.playerState.observe(this) { playerState ->
+            // Обновление UI в зависимости от состояния
+            if (playerState.isPlaying) {
                 playButton.setImageResource(R.drawable.pause)
             } else {
                 playButton.setImageResource(R.drawable.play)
             }
-        }
-
-        // Обновление времени воспр.
-        viewModel.currentPlayTime.observe(this) { formattedTime ->
-            currentPlayTimeTextView.text = formattedTime
-        }
-
-        // Изменение данных трека для отображения в UI
-        viewModel.trackData.observe(this) { track ->
-            updateTrackUI(track)
+            currentPlayTimeTextView.text = playerState.currentPlayTime
+            updateTrackUI(playerState.track)
         }
 
         // Логика кнопки "Play/Pause"
@@ -73,7 +66,6 @@ class PlayerActivity : AppCompatActivity() {
         val genreTextView: TextView = findViewById(R.id.genre)
         val countryTextView: TextView = findViewById(R.id.country)
         val trackTimeTextView: TextView = findViewById(R.id.time)
-        val backButton: Button = findViewById(R.id.button_back)
 
         trackNameTextView.text = track.trackName
         artistNameTextView.text = track.artistName
@@ -82,7 +74,6 @@ class PlayerActivity : AppCompatActivity() {
         genreTextView.text = track.primaryGenreName
         countryTextView.text = track.country
         trackTimeTextView.text = formatTrackTime(track.trackTime)
-        currentPlayTimeTextView.text = "0:00" // Начальное значение времени воспр.
 
         // Картинка обложки
         val radius = resources.getDimensionPixelSize(R.dimen.player_image_corner_radius)
@@ -90,11 +81,6 @@ class PlayerActivity : AppCompatActivity() {
             .load(track.artworkUrl100.replace("100x100bb", "512x512bb"))
             .apply(RequestOptions().transform(RoundedCorners(radius)))
             .into(coverImageView)
-
-        // Кнопка "Назад"
-        backButton.setOnClickListener {
-            onBackPressed()
-        }
     }
 
     override fun onPause() {

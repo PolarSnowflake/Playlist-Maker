@@ -5,8 +5,7 @@ import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlist_maker.data.player.Track
-import com.example.playlist_maker.ui.adapters.TrackAdapter
+import com.example.playlist_maker.domein.player.Track
 import com.example.playlist_maker.ui.player.PlayerActivity
 import com.google.android.material.button.MaterialButton
 

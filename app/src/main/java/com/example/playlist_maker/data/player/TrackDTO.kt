@@ -1,5 +1,7 @@
 package com.example.playlist_maker.data.player
 
+import com.example.playlist_maker.domein.player.Track
+
 data class TrackDTO(
     val trackId: Long,
     val trackName: String,

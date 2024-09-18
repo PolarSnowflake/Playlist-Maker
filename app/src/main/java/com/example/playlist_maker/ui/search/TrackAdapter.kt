@@ -1,8 +1,8 @@
-package com.example.playlist_maker.ui.adapters
+package com.example.playlist_maker.ui.search
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlist_maker.data.player.Track
+import com.example.playlist_maker.domein.player.Track
 
 class TrackAdapter(
     private var tracks: List<Track>,

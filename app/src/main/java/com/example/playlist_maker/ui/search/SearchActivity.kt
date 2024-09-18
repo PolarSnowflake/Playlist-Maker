@@ -20,10 +20,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlist_maker.R
-import com.example.playlist_maker.data.player.Track
+import com.example.playlist_maker.domein.player.Track
 import com.example.playlist_maker.creator.Creator
-import com.example.playlist_maker.data.search.SearchHistoryRepository
-import com.example.playlist_maker.ui.adapters.TrackAdapter
 import com.example.playlist_maker.ui.player.PlayerActivity
 
 class SearchActivity : AppCompatActivity() {
@@ -51,10 +49,9 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
 
         // ViewModel с фабрикой
-        val searchHistoryRepository =
-            SearchHistoryRepository(getSharedPreferences("search_history", MODE_PRIVATE))
+        val searchHistoryInteractor = Creator.provideSearchHistoryInteractor(this)
         val searchTracksInteractor = Creator.provideSearchTracksInteractor()
-        val factory = SearchViewModelFactory(searchTracksInteractor, searchHistoryRepository)
+        val factory = SearchViewModelFactory(searchTracksInteractor, searchHistoryInteractor)
         viewModel = ViewModelProvider(this, factory).get(SearchViewModel::class.java)
 
 

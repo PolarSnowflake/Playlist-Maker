@@ -24,8 +24,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         // Интерактор через Creator
-        val settingsInteractor = Creator.provideSettingsInteractor(application)
-        viewModel = ViewModelProvider(this, SettingsViewModelFactory(settingsInteractor))
+        viewModel = ViewModelProvider(this, SettingsViewModelFactory(Creator.provideSettingsInteractor(application)))
             .get(SettingsViewModel::class.java)
 
         themeSwitcher = findViewById(R.id.themeSwitcher)

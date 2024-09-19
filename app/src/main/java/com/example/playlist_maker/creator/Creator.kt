@@ -2,21 +2,23 @@ package com.example.playlist_maker.creator
 
 import android.app.Application
 import android.content.Context
-import com.example.playlist_maker.data.player.TrackRepositoryImpl
+import android.media.MediaPlayer
+import com.example.playlist_maker.data.search.TrackRepositoryImpl
 import com.example.playlist_maker.data.search.ITunesAPI
 import com.example.playlist_maker.domein.search.SearchTracksInteractor
 import com.example.playlist_maker.domein.search.SearchTracksInteractorImpl
-import com.example.playlist_maker.domein.player.TrackRepository
+import com.example.playlist_maker.domein.search.TrackRepository
 import com.example.playlist_maker.domein.player.PlayPauseInteractor
-import com.example.playlist_maker.data.player.PlayPauseInteractorImpl
+import com.example.playlist_maker.domein.player.PlayPauseInteractorImpl
 import com.example.playlist_maker.data.player.PlayerRepositoryImpl
-import com.example.playlist_maker.data.search.SearchHistoryInteractorImpl
+import com.example.playlist_maker.domein.search.SearchHistoryInteractorImpl
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import com.example.playlist_maker.data.search.SearchHistoryRepository
 import com.example.playlist_maker.data.settings.SharedPreferencesRepository
 import com.example.playlist_maker.domein.search.SearchHistoryInteractor
 import com.example.playlist_maker.domein.settings.SettingsInteractor
+import com.example.playlist_maker.domein.settings.SettingsInteractorImpl
 
 class Creator {
     companion object {
@@ -47,8 +49,9 @@ class Creator {
 
         // Плей/Пауза
         fun providePlayPauseInteractor(): PlayPauseInteractor {
-            val repository = PlayerRepositoryImpl()
-            return PlayPauseInteractorImpl(repository)
+            val mediaPlayer = MediaPlayer()
+            val playerRepository = PlayerRepositoryImpl(mediaPlayer)
+            return PlayPauseInteractorImpl(playerRepository)
         }
 
         // История поиска
@@ -61,7 +64,8 @@ class Creator {
 
         // Настройки
         fun provideSettingsInteractor(context: Context): SettingsInteractor {
-            return SharedPreferencesRepository(context.applicationContext as Application)
+            val repository = SharedPreferencesRepository(context.applicationContext as Application)
+            return SettingsInteractorImpl(repository)
         }
     }
 }

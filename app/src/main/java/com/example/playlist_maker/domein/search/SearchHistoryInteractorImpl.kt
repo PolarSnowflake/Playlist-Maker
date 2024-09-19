@@ -1,6 +1,6 @@
-package com.example.playlist_maker.data.search
+package com.example.playlist_maker.domein.search
 
-import com.example.playlist_maker.domein.search.SearchHistoryInteractor
+import com.example.playlist_maker.data.search.SearchHistoryRepository
 import com.example.playlist_maker.domein.player.Track
 
 class SearchHistoryInteractorImpl(

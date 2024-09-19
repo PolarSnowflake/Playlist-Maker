@@ -1,9 +1,8 @@
 package com.example.playlist_maker.domein.settings
 
 import androidx.lifecycle.LiveData
-import com.example.playlist_maker.data.settings.SharedPreferencesRepository
 
-class SettingsInteractorImpl(private val repository: SharedPreferencesRepository) : SettingsInteractor {
+class SettingsInteractorImpl(private val repository: SettingsRepository) : SettingsInteractor {
     override fun isNightModeInitialized(): Boolean {
         return repository.isNightModeInitialized()
     }

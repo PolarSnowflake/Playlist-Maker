@@ -1,7 +1,4 @@
-package com.example.playlist_maker.data.player
-
-import com.example.playlist_maker.domein.player.PlayPauseInteractor
-import com.example.playlist_maker.domein.player.Track
+package com.example.playlist_maker.domein.player
 
 class PlayPauseInteractorImpl(private val repository: PlayerRepository) : PlayPauseInteractor {
 

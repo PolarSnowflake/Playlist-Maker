@@ -3,10 +3,10 @@ package com.example.playlist_maker.data.player
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
+import com.example.playlist_maker.domein.player.PlayerRepository
 import com.example.playlist_maker.domein.player.Track
 
-class PlayerRepositoryImpl : PlayerRepository {
-    private var mediaPlayer: MediaPlayer? = null
+class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerRepository {
     private var handler: Handler = Handler(Looper.getMainLooper())
     private var updateRunnable: Runnable? = null
     private var hasReachedEnd = false
@@ -16,7 +16,7 @@ class PlayerRepositoryImpl : PlayerRepository {
         onTimeUpdate: (String) -> Unit,
         onCompletion: () -> Unit
     ) {
-        mediaPlayer = MediaPlayer().apply {
+        mediaPlayer.apply {
             setDataSource(track.previewUrl)
             prepare()
         }
@@ -25,7 +25,7 @@ class PlayerRepositoryImpl : PlayerRepository {
 
         updateRunnable = object : Runnable {
             override fun run() {
-                mediaPlayer?.let {
+                mediaPlayer.let {
                     if (it.isPlaying) {
                         val currentPosition = it.currentPosition / 1000
                         val formattedTime =
@@ -37,7 +37,7 @@ class PlayerRepositoryImpl : PlayerRepository {
             }
         }
 
-        mediaPlayer?.setOnCompletionListener {
+        mediaPlayer.setOnCompletionListener {
             hasReachedEnd = true
             onCompletion()
             updateRunnable?.let { runnable ->
@@ -47,7 +47,7 @@ class PlayerRepositoryImpl : PlayerRepository {
     }
 
     override fun play(onTimeUpdate: (String) -> Unit) {
-        mediaPlayer?.let {
+        mediaPlayer.let {
             if (hasReachedEnd) {
                 seekToStart()
             }
@@ -59,7 +59,7 @@ class PlayerRepositoryImpl : PlayerRepository {
     }
 
     override fun pause() {
-        mediaPlayer?.let {
+        mediaPlayer.let {
             if (it.isPlaying) {
                 it.pause()
                 updateRunnable?.let { runnable ->
@@ -70,19 +70,18 @@ class PlayerRepositoryImpl : PlayerRepository {
     }
 
     override fun release() {
-        mediaPlayer?.release()
-        mediaPlayer = null
+        mediaPlayer.release()
         updateRunnable?.let { runnable ->
             handler.removeCallbacks(runnable)
         }
     }
 
     override fun isPlaying(): Boolean {
-        return mediaPlayer?.isPlaying ?: false
+        return mediaPlayer.isPlaying
     }
 
     override fun seekToStart() {
-        mediaPlayer?.seekTo(0)
+        mediaPlayer.seekTo(0)
         hasReachedEnd = false
     }
 

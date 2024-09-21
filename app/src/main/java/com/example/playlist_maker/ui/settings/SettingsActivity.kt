@@ -6,26 +6,20 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlist_maker.R
-import com.example.playlist_maker.creator.Creator
-import com.example.playlist_maker.data.settings.SharedPreferencesRepository
 import com.example.playlist_maker.ui.main.MainActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
-
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
+    private val viewModel: SettingsViewModel by viewModel()
     private lateinit var themeSwitcher: SwitchMaterial
-    private lateinit var viewModel: SettingsViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
-        // Интерактор через Creator
-        viewModel = ViewModelProvider(this, SettingsViewModelFactory(Creator.provideSettingsInteractor(application)))
-            .get(SettingsViewModel::class.java)
 
         themeSwitcher = findViewById(R.id.themeSwitcher)
 

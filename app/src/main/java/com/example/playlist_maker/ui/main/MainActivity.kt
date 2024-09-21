@@ -5,18 +5,12 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlist_maker.R
-
+import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProvider(
-            this,
-            MainViewModelFactory(application)
-        ).get(MainViewModel::class.java)
 
         // Установка темы
         viewModel.themeLiveData.observe(this) { isNightMode ->
@@ -27,6 +21,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val button1: Button = findViewById(R.id.button1)

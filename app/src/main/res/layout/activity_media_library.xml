@@ -39,13 +39,9 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_media_library"
+        style="@style/CustomTabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/settingsBackground"
-        android:fontFamily="@font/ys_display_medium"
-        android:textAllCaps="false"
-        android:textSize="@dimen/media_library_text_size_16sp"
-        app:tabIndicatorHeight="2dp" />
+        android:layout_height="wrap_content" />
 
     <FrameLayout
         android:layout_width="match_parent"

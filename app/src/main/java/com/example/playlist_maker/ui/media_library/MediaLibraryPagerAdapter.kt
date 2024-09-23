@@ -8,16 +8,15 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 class MediaLibraryPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
 
-    private val fragmentList = listOf(
-        FavoritesTracksFragment.newInstance(),
-        PlaylistsFragment.newInstance()
-    )
-
     override fun getItemCount(): Int {
-        return fragmentList.size
+        return 2
     }
 
     override fun createFragment(position: Int): Fragment {
-        return fragmentList[position]
+        return when (position) {
+            0 -> FavoritesTracksFragment.newInstance()
+            1 -> PlaylistsFragment.newInstance()
+            else -> throw IllegalArgumentException("Invalid position: $position")
+        }
     }
 }

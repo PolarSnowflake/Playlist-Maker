@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlist_maker.data.settings.SharedPreferencesRepository
 import com.example.playlist_maker.di.mainModule
+import com.example.playlist_maker.di.mediaLibraryModule
 import com.example.playlist_maker.di.playerModule
 import com.example.playlist_maker.di.searchModule
 import com.example.playlist_maker.di.settingsModule
@@ -22,7 +23,7 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(listOf(playerModule,searchModule,settingsModule,mainModule))
+            modules(listOf(playerModule,searchModule,settingsModule,mainModule,mediaLibraryModule))
         }
 
         // Если значение не установлено, установить его в соответствии с системной темой

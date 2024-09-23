@@ -16,13 +16,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlist_maker.R
 import com.example.playlist_maker.domein.player.Track
-import com.example.playlist_maker.creator.Creator
 import com.example.playlist_maker.ui.player.PlayerActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -38,7 +37,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var updateButtonLayout: LinearLayout
     private lateinit var updateButton: Button
     private lateinit var searchHistoryTracks: SearchHistoryTracks
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModel()
 
     private var lastQuery: String = ""
     private val handler = Handler(Looper.getMainLooper())
@@ -47,13 +46,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
-        // ViewModel с фабрикой
-        val searchHistoryInteractor = Creator.provideSearchHistoryInteractor(this)
-        val searchTracksInteractor = Creator.provideSearchTracksInteractor()
-        val factory = SearchViewModelFactory(searchTracksInteractor, searchHistoryInteractor)
-        viewModel = ViewModelProvider(this, factory).get(SearchViewModel::class.java)
-
 
         searchBar = findViewById(R.id.searchBar)
         clearButton = findViewById(R.id.clear_button)

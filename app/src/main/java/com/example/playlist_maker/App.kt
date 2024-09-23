@@ -3,15 +3,27 @@ package com.example.playlist_maker
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlist_maker.data.settings.SharedPreferencesRepository
+import com.example.playlist_maker.di.mainModule
+import com.example.playlist_maker.di.playerModule
+import com.example.playlist_maker.di.searchModule
+import com.example.playlist_maker.di.settingsModule
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 
 class App : Application() {
 
-    private lateinit var sharedPreferencesRepository: SharedPreferencesRepository
+    private val sharedPreferencesRepository: SharedPreferencesRepository by inject()
 
     override fun onCreate() {
         super.onCreate()
 
-        sharedPreferencesRepository = SharedPreferencesRepository(this)
+        startKoin {
+            androidLogger()
+            androidContext(this@App)
+            modules(listOf(playerModule,searchModule,settingsModule,mainModule))
+        }
 
         // Если значение не установлено, установить его в соответствии с системной темой
         if (!sharedPreferencesRepository.isNightModeInitialized()) {
@@ -21,12 +33,6 @@ class App : Application() {
             sharedPreferencesRepository.toggleNightMode(isSystemDark)
         }
 
-        applyTheme()
-    }
-
-    // Переключение темы
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        sharedPreferencesRepository.toggleNightMode(darkThemeEnabled)
         applyTheme()
     }
 

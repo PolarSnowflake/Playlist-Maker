@@ -3,47 +3,49 @@ package com.example.playlist_maker.ui.settings
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.example.playlist_maker.R
-import com.example.playlist_maker.ui.main.MainActivity
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.example.playlist_maker.databinding.FragmentSettingsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
 
     private val viewModel: SettingsViewModel by viewModel()
-    private lateinit var themeSwitcher: SwitchMaterial
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        themeSwitcher = findViewById(R.id.themeSwitcher)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         // Изменение темы
-        viewModel.isNightMode.observe(this) { darkThemeEnabled ->
-            themeSwitcher.isChecked = darkThemeEnabled
-        }
+        binding.themeSwitcher.isChecked = viewModel.isNightMode.value ?: false
 
         // Переключение темы
-        themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+        binding.themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
             viewModel.switchTheme(isChecked)
         }
 
-        //Кнопка "Назад"
-        val backButton: Button = findViewById(R.id.button_back)
-        backButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+        setupListeners()
+    }
+
+    private fun setupListeners() {
+        binding.textView2.setOnClickListener { shareApp() }
+        binding.textView3.setOnClickListener { writeSupport() }
+        binding.textView4.setOnClickListener { openUserAgreement() }
     }
 
     // Метод для шеринга приложения
-    fun shareApp(view: View) {
+    private fun shareApp() {
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_text))
@@ -55,21 +57,25 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     // Метод для написания в поддержку
-    fun writeSupport(view: View) {
+    private fun writeSupport() {
         val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
             putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_email_subject))
             putExtra(Intent.EXTRA_TEXT, getString(R.string.support_email_text))
         }
-
         startActivity(Intent.createChooser(emailIntent, getString(R.string.share_intent_title)))
     }
 
     // Метод для открытия пользовательского соглашения
-    fun openUserAgreement(view: View) {
+    private fun openUserAgreement() {
         val userAgreementIntent =
             Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.user_agreement_url)))
         startActivity(userAgreementIntent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

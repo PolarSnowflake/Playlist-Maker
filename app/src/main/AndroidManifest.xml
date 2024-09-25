@@ -19,7 +19,7 @@
             android:label="@string/settings"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
         </activity>
-        <activity android:name=".ui.mediateka.MediatekaActivity"
+        <activity android:name=".ui.media_library.MediaLibraryActivity"
             android:label="@string/library"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
         </activity>

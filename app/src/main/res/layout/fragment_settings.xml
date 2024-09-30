@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/settingsBackground"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".ui.settings.SettingsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,14 +15,6 @@
         android:layout_marginTop="@dimen/layout_margin"
         android:gravity="center_vertical"
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/button_back"
-            style="@style/ButtonStyleIconOnly"
-            android:backgroundTint="@color/settingsBackground"
-            app:icon="@drawable/back"
-            app:iconGravity="textStart"
-            app:iconTint="@color/settingsIconBack" />
 
         <TextView
             android:id="@+id/textView1"

@@ -1,44 +1,44 @@
 package com.example.playlist_maker.ui.main
 
 import android.os.Bundle
-import android.widget.Button
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.playlist_maker.R
-import org.koin.androidx.viewmodel.ext.android.viewModel
-class MainActivity : AppCompatActivity() {
+import com.example.playlist_maker.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-    private val viewModel: MainViewModel by viewModel()
+class MainActivity : AppCompatActivity() {
+    private var _binding: ActivityMainBinding? = null
+    val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        // Установка темы
-        viewModel.themeLiveData.observe(this) { isNightMode ->
-            if (isNightMode) {
-                setTheme(R.style.Theme_PlaylistMaker_Dark)
-            } else {
-                setTheme(R.style.Theme_PlaylistMaker_Light)
-            }
-        }
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val button1: Button = findViewById(R.id.button1)
-        val button2: Button = findViewById(R.id.button2)
-        val button3: Button = findViewById(R.id.button3)
+        val navView: BottomNavigationView = binding.navView
+        val navController = findNavController(R.id.nav_host_fragment)
+        navView.setupWithNavController(navController)
 
-        // Слушатели
-        button1.setOnClickListener {
-            viewModel.navigateToSearch(this)
-        }
+        setupNavigationListener(navController)
+    }
 
-        button2.setOnClickListener {
-            viewModel.navigateToMediateka(this)
-        }
-
-        button3.setOnClickListener {
-            viewModel.navigateToSettings(this)
+    private fun setupNavigationListener(navController: NavController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.player_coordinator_layout -> {
+                    binding.navSeparator.visibility = View.GONE
+                    binding.navView.visibility = View.GONE
+                }
+                else -> {
+                    binding.navSeparator.visibility = View.VISIBLE
+                    binding.navView.visibility = View.VISIBLE
+                }
+            }
         }
     }
 }

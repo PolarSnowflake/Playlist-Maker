@@ -30,4 +30,7 @@
     <color name="ic_add_to_playlist">#1A1B22</color>
     <color name="ic_play">#1A1B22</color>
     <color name="progressbar">#3772E7</color>
+    <color name="selected_color_menu">#3772E7</color>
+    <color name="unselected_color_menu">#1A1B22</color>
+    <color name="nav_separator_color">#FFFFFF</color>
 </resources>

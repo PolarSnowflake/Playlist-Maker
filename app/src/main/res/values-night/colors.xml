@@ -31,4 +31,5 @@
     <color name="ic_play">#FFFFFF</color>
     <color name="selected_color_menu">#3772E7</color>
     <color name="unselected_color_menu">#FFFFFF</color>
+    <color name="nav_separator_color">#AEAFB4</color>
 </resources>

@@ -1,7 +1,9 @@
 package com.example.playlist_maker.ui.main
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.playlist_maker.R
@@ -22,5 +24,21 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         navView.setupWithNavController(navController)
 
+        setupNavigationListener(navController)
+    }
+
+    private fun setupNavigationListener(navController: NavController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.player_coordinator_layout -> {
+                    binding.navSeparator.visibility = View.GONE
+                    binding.navView.visibility = View.GONE
+                }
+                else -> {
+                    binding.navSeparator.visibility = View.VISIBLE
+                    binding.navView.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 }

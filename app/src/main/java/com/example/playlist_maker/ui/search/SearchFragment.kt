@@ -6,36 +6,25 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.playlist_maker.R
+import com.example.playlist_maker.databinding.FragmentSearchBinding
 import com.example.playlist_maker.domein.player.Track
 import com.example.playlist_maker.ui.player.PlayerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
-    private lateinit var searchBar: EditText
-    private lateinit var clearButton: ImageButton
-    private lateinit var recyclerView: RecyclerView
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var searchHint: TextView
-    private lateinit var progressBarScreen: LinearLayout
-    private lateinit var errorPlaceholderLayout: LinearLayout
-    private lateinit var placeholderError: ImageView
-    private lateinit var placeholderMessage: TextView
-    private lateinit var updateButtonLayout: LinearLayout
-    private lateinit var updateButton: Button
     private lateinit var searchHistoryTracks: SearchHistoryTracks
     private val viewModel: SearchViewModel by viewModel()
 
@@ -43,20 +32,16 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        searchBar = findViewById(R.id.searchBar)
-        clearButton = findViewById(R.id.clear_button)
-        recyclerView = findViewById(R.id.recyclerView)
-        searchHint = findViewById(R.id.searchHint)
-        progressBarScreen = findViewById(R.id.progressBarLayout)
-        errorPlaceholderLayout = findViewById(R.id.error_placeholder_layout)
-        placeholderError = findViewById(R.id.placeholderError)
-        placeholderMessage = findViewById(R.id.placeholderMessage)
-        updateButtonLayout = findViewById(R.id.update_button_layout)
-        updateButton = findViewById(R.id.update_button)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         trackAdapter = TrackAdapter(emptyList()) { track ->  // Начинаем с пустого списка треков
             handler.removeCallbacksAndMessages(null)
@@ -67,38 +52,40 @@ class SearchActivity : AppCompatActivity() {
             }, 300)
         }
 
-        recyclerView.adapter = trackAdapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = trackAdapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         searchHistoryTracks = SearchHistoryTracks(
-            this,
-            findViewById(R.id.recyclerHistoryTracks),
-            findViewById(R.id.historyClear),
-            findViewById(R.id.searchHistoryHeader),
+            requireContext(),
+            binding.recyclerHistoryTracks,
+            binding.historyClear,
+            binding.searchHistoryHeader,
             viewModel
         )
 
         setupObservers()
-
-        // Настройка событий для поиска
-        searchBar.addTextChangedListener(object : TextWatcher {
+        setupSearchBar()
+    }
+    // Настройка событий для поиска
+    private fun setupSearchBar() {
+        binding.searchBar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
+                binding.clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 if (s.isNullOrEmpty()) {
-                    recyclerView.visibility = View.GONE
+                    binding.recyclerView.visibility = View.GONE
                     trackAdapter.updateTracks(emptyList())
                     hideErrorPlaceholder()
                     hideUpdateButton()
-                    searchHint.visibility = View.VISIBLE // Показываем searchHint при пустом тексте
-                    if (searchBar.hasFocus()) {
+                    binding.searchHint.visibility = View.VISIBLE // Показываем searchHint при пустом тексте
+                    if (binding.searchBar.hasFocus()) {
                         searchHistoryTracks.loadSearchHistory() // Показываем историю, если есть
                     }
                 } else {
                     searchHistoryTracks.hideHistory() // Скрываем историю при вводе текста
-                    searchHint.visibility = View.GONE // Скрываем searchHint при вводе текста
-                    progressBarScreen.visibility = View.VISIBLE
+                    binding.searchHint.visibility = View.GONE // Скрываем searchHint при вводе текста
+                    binding.progressBarLayout.visibility = View.VISIBLE
                     debounceSearch(s.toString())
                 }
             }
@@ -106,11 +93,11 @@ class SearchActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     // Дополнительная проверка в afterTextChanged для обработки случая длительного нажатия кнопки "Стереть"
-                    recyclerView.visibility = View.GONE
+                    binding.recyclerView.visibility = View.GONE
                     trackAdapter.updateTracks(emptyList())
                     hideErrorPlaceholder()
                     hideUpdateButton()
-                    if (searchBar.hasFocus()) {
+                    if (binding.searchBar.hasFocus()) {
                         searchHistoryTracks.loadSearchHistory()
                     }
                 }
@@ -118,21 +105,21 @@ class SearchActivity : AppCompatActivity() {
         })
 
         // Отслеживание фокуса
-        searchBar.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && searchBar.text.isEmpty()) {
-                searchHint.visibility = View.VISIBLE
+        binding.searchBar.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && binding.searchBar.text.isEmpty()) {
+                binding.searchHint.visibility = View.VISIBLE
                 searchHistoryTracks.loadSearchHistory()
-                recyclerView.visibility = View.GONE
+                binding.recyclerView.visibility = View.GONE
             } else {
-                searchHint.visibility = View.GONE
+                binding.searchHint.visibility = View.GONE
                 searchHistoryTracks.hideHistory()
             }
         }
 
         // Кнопка "Готово" на клавиатуре
-        searchBar.setOnEditorActionListener { _, actionId, _ ->
+        binding.searchBar.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                performSearch(searchBar.text.toString())
+                performSearch(binding.searchBar.text.toString())
                 hideKeyboard()
                 searchHistoryTracks.hideHistory()
                 true
@@ -142,48 +129,42 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // Кнопка "Очистить поисковый запрос"
-        clearButton.setOnClickListener {
-            searchBar.text.clear()
+        binding.clearButton.setOnClickListener {
+            binding.searchBar.text.clear()
             hideKeyboard()
-            recyclerView.visibility = View.GONE
+            binding.recyclerView.visibility = View.GONE
             trackAdapter.updateTracks(emptyList())
             hideErrorPlaceholder()
             hideUpdateButton()
-            searchHint.visibility = View.VISIBLE // Показываем searchHint после очистки текста
+            binding.searchHint.visibility = View.VISIBLE // Показываем searchHint после очистки текста
             searchHistoryTracks.loadSearchHistory() // Загрузка истории после очистки текста
         }
 
         // Кнопка "Обновить"
-        updateButton.setOnClickListener {
+        binding.updateButton.setOnClickListener {
             retryLastSearch()
-        }
-
-        // Кнопка "Назад"
-        val backButton: Button = findViewById(R.id.button_back)
-        backButton.setOnClickListener {
-            finish()
         }
     }
 
     private fun setupObservers() {
         // Изменение списка треков
-        viewModel.searchResults.observe(this) { tracks ->
-            progressBarScreen.visibility = View.GONE
+        viewModel.searchResults.observe(viewLifecycleOwner) { tracks ->
+            binding.progressBarLayout.visibility = View.GONE
             if (tracks.isNotEmpty()) {
                 trackAdapter.updateTracks(tracks)  // Обновляем треки
-                recyclerView.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.VISIBLE
             } else {
                 showNoResultsPlaceholder()  // Показываем плейсхолдер, если результаты пусты
             }
         }
 
         // Изменение состояния загрузки
-        viewModel.loading.observe(this) { isLoading ->
-            progressBarScreen.visibility = if (isLoading) View.VISIBLE else View.GONE
+        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBarLayout.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
 
         // Ошибка
-        viewModel.error.observe(this) { isError ->
+        viewModel.error.observe(viewLifecycleOwner) { isError ->
             if (isError) showErrorPlaceholder()  // Показываем плейсхолдер ошибки
         }
     }
@@ -202,8 +183,8 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryTracks.hideHistory()
         hideErrorPlaceholder()
         hideUpdateButton()
-        recyclerView.visibility = View.GONE
-        progressBarScreen.visibility = View.VISIBLE
+        binding.recyclerView.visibility = View.GONE
+        binding.progressBarLayout.visibility = View.VISIBLE
         viewModel.searchTracks(query)
     }
     // Повтор последнего неудавшегося запроса
@@ -214,49 +195,55 @@ class SearchActivity : AppCompatActivity() {
     // Плейсхолдер "Ничего не найдено"
     private fun showNoResultsPlaceholder() {
         trackAdapter.updateTracks(emptyList())
-        recyclerView.visibility = View.GONE
-        errorPlaceholderLayout.visibility = View.VISIBLE
-        placeholderError.visibility = View.VISIBLE
-        placeholderMessage.visibility = View.VISIBLE
-        updateButtonLayout.visibility = View.GONE
-        placeholderMessage.text = getString(R.string.nothing_found)
-        placeholderError.setImageResource(R.drawable.not_found_icon)
+        binding.recyclerView.visibility = View.GONE
+        binding.errorPlaceholderLayout.visibility = View.VISIBLE
+        binding.placeholderError.visibility = View.VISIBLE
+        binding.placeholderMessage.visibility = View.VISIBLE
+        binding.updateButtonLayout.visibility = View.GONE
+        binding.placeholderMessage.text = getString(R.string.nothing_found)
+        binding.placeholderError.setImageResource(R.drawable.not_found_icon)
         searchHistoryTracks.hideHistory()
     }
 
     // Плейсхолдер "Ошибка подключения"
     private fun showErrorPlaceholder() {
         trackAdapter.updateTracks(emptyList())
-        recyclerView.visibility = View.GONE
-        errorPlaceholderLayout.visibility = View.VISIBLE
-        placeholderError.visibility = View.VISIBLE
-        placeholderMessage.visibility = View.VISIBLE
-        updateButtonLayout.visibility = View.VISIBLE
-        placeholderMessage.text = getString(R.string.no_int)
-        placeholderError.setImageResource(R.drawable.no_int_icon)
+        binding.recyclerView.visibility = View.GONE
+        binding.errorPlaceholderLayout.visibility = View.VISIBLE
+        binding.placeholderError.visibility = View.VISIBLE
+        binding.placeholderMessage.visibility = View.VISIBLE
+        binding.updateButtonLayout.visibility = View.VISIBLE
+        binding.placeholderMessage.text = getString(R.string.no_int)
+        binding.placeholderError.setImageResource(R.drawable.no_int_icon)
         searchHistoryTracks.hideHistory()
     }
 
     // Скрытие плейсхолдера ошибки
     private fun hideErrorPlaceholder() {
-        errorPlaceholderLayout.visibility = View.GONE
+        binding.errorPlaceholderLayout.visibility = View.GONE
     }
 
     // Скрытие кнопки "Обновить"
     private fun hideUpdateButton() {
-        updateButtonLayout.visibility = View.GONE
+        binding.updateButtonLayout.visibility = View.GONE
     }
 
     // Скрытие клавиатуры
     private fun hideKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(searchBar.windowToken, 0)
+        val imm = requireContext().getSystemService(InputMethodManager::class.java)
+        imm?.hideSoftInputFromWindow(binding.searchBar.windowToken, 0)
     }
 
     // Переход на PlayerActivity
     private fun startPlayerActivity(track: Track) {
-        val intent = Intent(this, PlayerActivity::class.java)
+        val intent = Intent(requireContext(), PlayerActivity::class.java)
         intent.putExtra("track", track)
         startActivity(intent)
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

@@ -76,8 +76,10 @@ class SearchFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 if (s.isNullOrEmpty()) {
-                    binding.recyclerView.visibility = View.GONE
+                    debounceJob?.cancel() // Отмена debounce
+                    binding.progressBarLayout.visibility = View.GONE
                     trackAdapter.updateTracks(emptyList())
+                    binding.recyclerView.visibility = View.GONE
                     hideErrorPlaceholder()
                     hideUpdateButton()
                     binding.searchHint.visibility =
@@ -97,11 +99,14 @@ class SearchFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     // Дополнительная проверка в afterTextChanged для обработки случая длительного нажатия кнопки "Стереть"
-                    binding.recyclerView.visibility = View.GONE
+                    debounceJob?.cancel()
+                    binding.progressBarLayout.visibility = View.GONE
                     trackAdapter.updateTracks(emptyList())
+                    binding.recyclerView.visibility = View.GONE
                     hideErrorPlaceholder()
                     hideUpdateButton()
                     if (binding.searchBar.hasFocus()) {
+                        binding.searchHint.visibility = View.VISIBLE
                         searchHistoryTracks.loadSearchHistory()
                     }
                 }

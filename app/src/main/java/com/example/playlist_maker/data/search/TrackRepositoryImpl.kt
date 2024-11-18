@@ -5,7 +5,7 @@ import com.example.playlist_maker.domein.player.Track
 import com.example.playlist_maker.domein.search.TrackRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.HttpException
+import java.io.IOException
 
 class TrackRepositoryImpl(private val api: ITunesAPI) : TrackRepository {
     override fun searchTracks(query: String): Flow<Result<List<Track>>> = flow {
@@ -17,10 +17,8 @@ class TrackRepositoryImpl(private val api: ITunesAPI) : TrackRepository {
             } else {
                 emit(Result.success(emptyList())) // Если результат пуст, возвращаем пустой список
             }
-        } catch (e: HttpException) {
-            emit(Result.failure(e)) // Ошибка от сервера
-        } catch (e: Exception) {
-            emit(Result.failure(e)) // Прочие ошибки
+        } catch (e: IOException) {
+            emit(Result.failure(e))
         }
     }
 }

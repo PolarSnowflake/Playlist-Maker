@@ -1,16 +1,15 @@
 package com.example.playlist_maker.data.player
 
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
 import com.example.playlist_maker.domein.player.PlayerRepository
 import com.example.playlist_maker.domein.player.Track
 import java.io.IOException
+import kotlinx.coroutines.*
 
 class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerRepository {
-    private var handler: Handler = Handler(Looper.getMainLooper())
-    private var updateRunnable: Runnable? = null
     private var hasReachedEnd = false
+    private var updateJob: Job? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun preparePlayer(
         track: Track,
@@ -24,24 +23,10 @@ class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerReposit
 
             hasReachedEnd = false
 
-            updateRunnable = object : Runnable {
-                override fun run() {
-                    if (mediaPlayer.isPlaying) {
-                        val currentPosition = mediaPlayer.currentPosition / 1000
-                        val formattedTime =
-                            String.format("%02d:%02d", currentPosition / 60, currentPosition % 60)
-                        onTimeUpdate(formattedTime)
-                        handler.postDelayed(this, 1000)
-                    }
-                }
-            }
-
             mediaPlayer.setOnCompletionListener {
                 hasReachedEnd = true
                 onCompletion()
-                updateRunnable?.let { runnable ->
-                    handler.removeCallbacks(runnable)
-                }
+                stopProgressUpdate()
             }
 
         } catch (e: IOException) {
@@ -54,25 +39,19 @@ class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerReposit
             seekToStart()
         }
         mediaPlayer.start()
-        updateRunnable?.let { runnable ->
-            handler.post(runnable)
-        }
+        startProgressUpdate(onTimeUpdate)
     }
 
     override fun pause() {
         if (mediaPlayer.isPlaying) {
             mediaPlayer.pause()
-            updateRunnable?.let { runnable ->
-                handler.removeCallbacks(runnable)
-            }
+            stopProgressUpdate()
         }
     }
 
     override fun release() {
+        stopProgressUpdate()
         mediaPlayer.release()
-        updateRunnable?.let { runnable ->
-            handler.removeCallbacks(runnable)
-        }
     }
 
     override fun isPlaying(): Boolean {
@@ -86,5 +65,22 @@ class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerReposit
 
     override fun hasReachedEnd(): Boolean {
         return hasReachedEnd
+    }
+
+    private fun startProgressUpdate(onTimeUpdate: (String) -> Unit) {
+        stopProgressUpdate()
+        updateJob = coroutineScope.launch {
+            while (isPlaying()) {
+                val currentPosition = mediaPlayer.currentPosition / 1000
+                val formattedTime = String.format("%02d:%02d", currentPosition / 60, currentPosition % 60)
+                onTimeUpdate(formattedTime)
+                delay(300L)
+            }
+        }
+    }
+
+    private fun stopProgressUpdate() {
+        updateJob?.cancel()
+        updateJob = null
     }
 }

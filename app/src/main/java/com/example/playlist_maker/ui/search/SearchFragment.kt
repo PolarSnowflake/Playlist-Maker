@@ -2,8 +2,6 @@ package com.example.playlist_maker.ui.search
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,11 +10,15 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker.R
 import com.example.playlist_maker.databinding.FragmentSearchBinding
 import com.example.playlist_maker.domein.player.Track
 import com.example.playlist_maker.ui.player.PlayerActivity
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -29,8 +31,7 @@ class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModel()
 
     private var lastQuery: String = ""
-    private val handler = Handler(Looper.getMainLooper())
-    private var searchRunnable: Runnable? = null
+    private var debounceJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,12 +45,13 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         trackAdapter = TrackAdapter(emptyList()) { track ->  // Начинаем с пустого списка треков
-            handler.removeCallbacksAndMessages(null)
-            handler.postDelayed({
+            debounceJob?.cancel()
+            debounceJob = lifecycleScope.launch {
+                delay(300)
                 viewModel.addTrackToHistory(track)
                 searchHistoryTracks.hideHistory()
                 startPlayerActivity(track)
-            }, 300)
+            }
         }
 
         binding.recyclerView.adapter = trackAdapter
@@ -74,17 +76,21 @@ class SearchFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 if (s.isNullOrEmpty()) {
-                    binding.recyclerView.visibility = View.GONE
+                    debounceJob?.cancel() // Отмена debounce
+                    binding.progressBarLayout.visibility = View.GONE
                     trackAdapter.updateTracks(emptyList())
+                    binding.recyclerView.visibility = View.GONE
                     hideErrorPlaceholder()
                     hideUpdateButton()
-                    binding.searchHint.visibility = View.VISIBLE // Показываем searchHint при пустом тексте
+                    binding.searchHint.visibility =
+                        View.VISIBLE // Показываем searchHint при пустом тексте
                     if (binding.searchBar.hasFocus()) {
                         searchHistoryTracks.loadSearchHistory() // Показываем историю, если есть
                     }
                 } else {
                     searchHistoryTracks.hideHistory() // Скрываем историю при вводе текста
-                    binding.searchHint.visibility = View.GONE // Скрываем searchHint при вводе текста
+                    binding.searchHint.visibility =
+                        View.GONE // Скрываем searchHint при вводе текста
                     binding.progressBarLayout.visibility = View.VISIBLE
                     debounceSearch(s.toString())
                 }
@@ -93,11 +99,14 @@ class SearchFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     // Дополнительная проверка в afterTextChanged для обработки случая длительного нажатия кнопки "Стереть"
-                    binding.recyclerView.visibility = View.GONE
+                    debounceJob?.cancel()
+                    binding.progressBarLayout.visibility = View.GONE
                     trackAdapter.updateTracks(emptyList())
+                    binding.recyclerView.visibility = View.GONE
                     hideErrorPlaceholder()
                     hideUpdateButton()
                     if (binding.searchBar.hasFocus()) {
+                        binding.searchHint.visibility = View.VISIBLE
                         searchHistoryTracks.loadSearchHistory()
                     }
                 }
@@ -119,7 +128,7 @@ class SearchFragment : Fragment() {
         // Кнопка "Готово" на клавиатуре
         binding.searchBar.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                performSearch(binding.searchBar.text.toString())
+                debounceSearch(binding.searchBar.text.toString())
                 hideKeyboard()
                 searchHistoryTracks.hideHistory()
                 true
@@ -136,7 +145,8 @@ class SearchFragment : Fragment() {
             trackAdapter.updateTracks(emptyList())
             hideErrorPlaceholder()
             hideUpdateButton()
-            binding.searchHint.visibility = View.VISIBLE // Показываем searchHint после очистки текста
+            binding.searchHint.visibility =
+                View.VISIBLE // Показываем searchHint после очистки текста
             searchHistoryTracks.loadSearchHistory() // Загрузка истории после очистки текста
         }
 
@@ -165,16 +175,16 @@ class SearchFragment : Fragment() {
 
         // Ошибка
         viewModel.error.observe(viewLifecycleOwner) { isError ->
-            if (isError) showErrorPlaceholder()  // Показываем плейсхолдер ошибки
+            if (isError) showErrorPlaceholder()
         }
     }
+
     // Выполнение поискового запроса с задержкой (debounce)
     private fun debounceSearch(query: String) {
-        searchRunnable?.let { handler.removeCallbacks(it) }
-        searchRunnable = Runnable { performSearch(query) }
-        // Запускаем новый запрос с задержкой в 2 секунды
-        searchRunnable?.let { runnable ->
-            handler.postDelayed(runnable, 2000)
+        debounceJob?.cancel()  // Отменяем предыдущий Job
+        debounceJob = lifecycleScope.launch {
+            delay(2000L)  // Задержка перед выполнением запроса
+            performSearch(query)
         }
     }
     // Выполнение поискового запроса

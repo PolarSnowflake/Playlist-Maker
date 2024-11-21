@@ -13,5 +13,6 @@ data class Track(
     @SerializedName("releaseDate") val releaseDate: String,
     @SerializedName("primaryGenreName") val primaryGenreName: String,
     @SerializedName("country") val country: String,
-    @SerializedName("previewUrl") val previewUrl: String
+    @SerializedName("previewUrl") val previewUrl: String,
+    var isFavorite: Boolean = false
 ) : Serializable

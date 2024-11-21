@@ -6,10 +6,22 @@
     app:startDestination="@id/fragment_media_library">
 
     <fragment
-        android:id="@+id/fragment_favorites_tracks"
+        android:id="@+id/favoritesTracksFragment"
         android:name="com.example.playlist_maker.ui.media_library.FavoritesTracksFragment"
         android:label="Favorites Tracks"
-        tools:layout="@layout/fragment_favorites_tracks" />
+        tools:layout="@layout/fragment_favorites_tracks">
+        <action
+            android:id="@+id/action_favoritesTracksFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
+        <argument
+            android:name="track"
+            app:argType="com.example.playlist_maker.domein.player.Track" />
+    </fragment>
+
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="com.example.playlist_maker.ui.player.PlayerActivity"
+        tools:layout="@layout/activity_player" />
 
     <fragment
         android:id="@+id/fragment_media_library"

@@ -3,8 +3,10 @@ package com.example.playlist_maker
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlist_maker.data.settings.SharedPreferencesRepository
-import com.example.playlist_maker.di.mediaLibraryModule
+import com.example.playlist_maker.di.appModule
+import com.example.playlist_maker.di.favoritesModule
 import com.example.playlist_maker.di.playerModule
+import com.example.playlist_maker.di.playlistsModule
 import com.example.playlist_maker.di.searchModule
 import com.example.playlist_maker.di.settingsModule
 import org.koin.android.ext.android.inject
@@ -22,7 +24,14 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(listOf(playerModule,searchModule,settingsModule,mediaLibraryModule))
+            modules(listOf(
+                appModule,
+                settingsModule,
+                searchModule,
+                favoritesModule,
+                playerModule,
+                playlistsModule
+             ))
         }
 
         // Если значение не установлено, установить его в соответствии с системной темой

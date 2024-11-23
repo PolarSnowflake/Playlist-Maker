@@ -33,4 +33,8 @@ class PlayPauseInteractorImpl(private val repository: PlayerRepository) : PlayPa
     override fun hasReachedEnd(): Boolean {
         return repository.hasReachedEnd()
     }
+
+    override fun getCurrentPosition(): Int {
+        return repository.getCurrentPosition()
+    }
 }

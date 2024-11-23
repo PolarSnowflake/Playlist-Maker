@@ -68,6 +68,7 @@ class SearchFragment : Fragment() {
         setupObservers()
         setupSearchBar()
     }
+
     // Настройка событий для поиска
     private fun setupSearchBar() {
         binding.searchBar.addTextChangedListener(object : TextWatcher {
@@ -91,7 +92,6 @@ class SearchFragment : Fragment() {
                     searchHistoryTracks.hideHistory() // Скрываем историю при вводе текста
                     binding.searchHint.visibility =
                         View.GONE // Скрываем searchHint при вводе текста
-                    binding.progressBarLayout.visibility = View.VISIBLE
                     debounceSearch(s.toString())
                 }
             }
@@ -183,10 +183,12 @@ class SearchFragment : Fragment() {
     private fun debounceSearch(query: String) {
         debounceJob?.cancel()  // Отменяем предыдущий Job
         debounceJob = lifecycleScope.launch {
-            delay(2000L)  // Задержка перед выполнением запроса
+            delay(2000L)
+            binding.progressBarLayout.visibility = View.VISIBLE
             performSearch(query)
         }
     }
+
     // Выполнение поискового запроса
     private fun performSearch(query: String) {
         lastQuery = query
@@ -197,6 +199,7 @@ class SearchFragment : Fragment() {
         binding.progressBarLayout.visibility = View.VISIBLE
         viewModel.searchTracks(query)
     }
+
     // Повтор последнего неудавшегося запроса
     private fun retryLastSearch() {
         performSearch(lastQuery)

@@ -32,4 +32,5 @@
     <color name="selected_color_menu">#3772E7</color>
     <color name="unselected_color_menu">#FFFFFF</color>
     <color name="nav_separator_color">#AEAFB4</color>
+    <color name="ic_add_to_playlist_full">#F56B6C</color>
 </resources>

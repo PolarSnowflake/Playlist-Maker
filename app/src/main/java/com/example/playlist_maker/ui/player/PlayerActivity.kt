@@ -52,11 +52,12 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.onPlayPauseClicked()
         }
 
-        // Кнопка "Назад"
+        // Кнопка "Нравится"
         favoriteButton.setOnClickListener {
             viewModel.onFavoriteClicked()
         }
 
+        // Кнопка "Назад"
         findViewById<Button>(R.id.button_back).setOnClickListener {
             onBackPressed()
         }

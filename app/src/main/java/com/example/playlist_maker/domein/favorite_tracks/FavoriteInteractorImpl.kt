@@ -1,7 +1,6 @@
 package com.example.playlist_maker.domein.favorite_tracks
 
 import com.example.playlist_maker.domein.player.Track
-import kotlinx.coroutines.flow.Flow
 
 class FavoriteInteractorImpl(
     private val repository: FavoriteRepository
@@ -15,7 +14,9 @@ class FavoriteInteractorImpl(
         repository.removeTrackFromFavorites(trackId)
     }
 
-    override fun getAllFavoriteTracks(): Flow<List<Track>> {
-        return repository.getFavoriteTracks()
+    override suspend fun isTrackFavorite(trackId: Long): Boolean {
+        return repository.isTrackFavorite(trackId)
     }
+
+    override fun getAllFavoriteTracks() = repository.getFavoriteTracks()
 }

@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlist_maker.data.player.PlayerState
-import com.example.playlist_maker.domein.player.Track
-import com.example.playlist_maker.domein.player.PlayPauseInteractor
 import com.example.playlist_maker.domein.favorite_tracks.FavoriteInteractor
+import com.example.playlist_maker.domein.player.PlayPauseInteractor
+import com.example.playlist_maker.domein.player.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -32,8 +32,15 @@ class PlayerViewModel(
             currentPlayTime = "00:00",
             track = track
         )
-        _isFavorite.value = track.isFavorite // Устанавливаем начальное состояние
+        checkIfFavorite(track)
         preparePlayer()
+    }
+
+    private fun checkIfFavorite(track: Track) {
+        viewModelScope.launch {
+            val isFav = favoriteInteractor.isTrackFavorite(track.trackId)
+            _isFavorite.postValue(isFav)
+        }
     }
 
     // Подготовка плеера

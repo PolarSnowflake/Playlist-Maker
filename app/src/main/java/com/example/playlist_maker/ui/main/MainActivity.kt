@@ -30,10 +30,12 @@ class MainActivity : AppCompatActivity() {
     private fun setupNavigationListener(navController: NavController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.player_coordinator_layout -> {
+                R.id.player_coordinator_layout,
+                R.id.newPlaylistFragment -> {
                     binding.navSeparator.visibility = View.GONE
                     binding.navView.visibility = View.GONE
                 }
+
                 else -> {
                     binding.navSeparator.visibility = View.VISIBLE
                     binding.navView.visibility = View.VISIBLE

@@ -35,11 +35,10 @@ class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerReposit
     }
 
     override fun play(onTimeUpdate: (String) -> Unit) {
-        if (hasReachedEnd) {
-            seekToStart()
+        if (!mediaPlayer.isPlaying) {
+            mediaPlayer.start()
+            startProgressUpdate(onTimeUpdate)
         }
-        mediaPlayer.start()
-        startProgressUpdate(onTimeUpdate)
     }
 
     override fun pause() {
@@ -54,25 +53,30 @@ class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerReposit
         mediaPlayer.release()
     }
 
-    override fun isPlaying(): Boolean {
-        return mediaPlayer.isPlaying
-    }
+    override fun isPlaying(): Boolean = mediaPlayer.isPlaying
 
     override fun seekToStart() {
         mediaPlayer.seekTo(0)
         hasReachedEnd = false
     }
 
-    override fun hasReachedEnd(): Boolean {
-        return hasReachedEnd
+    override fun hasReachedEnd(): Boolean = hasReachedEnd
+
+    override fun getCurrentPosition(): Int {
+        return if (hasReachedEnd) {
+            mediaPlayer.duration
+        } else {
+            mediaPlayer.currentPosition
+        }
     }
 
     private fun startProgressUpdate(onTimeUpdate: (String) -> Unit) {
-        stopProgressUpdate()
+        if (updateJob?.isActive == true) return
         updateJob = coroutineScope.launch {
             while (isPlaying()) {
                 val currentPosition = mediaPlayer.currentPosition / 1000
-                val formattedTime = String.format("%02d:%02d", currentPosition / 60, currentPosition % 60)
+                val formattedTime =
+                    String.format("%02d:%02d", currentPosition / 60, currentPosition % 60)
                 onTimeUpdate(formattedTime)
                 delay(300L)
             }

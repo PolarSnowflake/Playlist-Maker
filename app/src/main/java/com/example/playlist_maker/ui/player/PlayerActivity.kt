@@ -14,11 +14,11 @@ import com.example.playlist_maker.domein.player.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-
 class PlayerActivity : AppCompatActivity() {
 
     private val viewModel: PlayerViewModel by viewModel { parametersOf(intent.getSerializableExtra("track") as Track) }
     private lateinit var playButton: ImageButton
+    private lateinit var favoriteButton: ImageButton
     private lateinit var currentPlayTimeTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +27,7 @@ class PlayerActivity : AppCompatActivity() {
 
         currentPlayTimeTextView = findViewById(R.id.current_time)
         playButton = findViewById(R.id.button_play)
+        favoriteButton = findViewById(R.id.like_button)
 
         viewModel.playerState.observe(this) { playerState ->
             // Обновление UI в зависимости от состояния
@@ -39,14 +40,25 @@ class PlayerActivity : AppCompatActivity() {
             updateTrackUI(playerState.track)
         }
 
+        // Логика кнопки "Нравится"
+        viewModel.isFavorite.observe(this) { isFavorite ->
+            favoriteButton.setImageResource(
+                if (isFavorite) R.drawable.like_full else R.drawable.like
+            )
+        }
+
         // Логика кнопки "Play/Pause"
         playButton.setOnClickListener {
             viewModel.onPlayPauseClicked()
         }
 
+        // Кнопка "Нравится"
+        favoriteButton.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
+
         // Кнопка "Назад"
-        val backButton: Button = findViewById(R.id.button_back)
-        backButton.setOnClickListener {
+        findViewById<Button>(R.id.button_back).setOnClickListener {
             onBackPressed()
         }
     }

@@ -8,4 +8,5 @@ interface PlayPauseInteractor {
     fun isPlaying(): Boolean
     fun seekToStart()
     fun hasReachedEnd(): Boolean
+    fun getCurrentPosition(): Int
 }

@@ -2,7 +2,7 @@ package com.example.playlist_maker.di
 
 import androidx.room.Room
 import com.example.playlist_maker.data.db.AppDatabase
-import com.example.playlist_maker.data.db.TrackConverter
+import com.example.playlist_maker.data.db.favoriteDB.TrackConverter
 import org.koin.dsl.module
 
 val appModule = module {

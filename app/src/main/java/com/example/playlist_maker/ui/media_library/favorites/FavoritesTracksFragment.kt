@@ -1,4 +1,4 @@
-package com.example.playlist_maker.ui.media_library
+package com.example.playlist_maker.ui.media_library.favorites
 
 import android.content.Intent
 import android.os.Bundle

@@ -212,4 +212,19 @@
         <item name="lineSpacing">2sp</item>
         <item name="android:textStyle">normal</item>
     </style>
+
+    <style name="RoundedBottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearanceOverlay">@style/BottomSheetShapeAppearance</item>
+        <item name="android:background">@color/white</item>
+        <item name="elevation">0dp</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:outlineProvider">none</item>
+    </style>
+
+
+    <style name="BottomSheetShapeAppearance" parent="ShapeAppearanceOverlay.MaterialComponents.BottomSheet">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
 </resources>

@@ -34,3 +34,4 @@ material-v190 = { module = "com.google.android.material:material", version.ref =
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrainsKotlinKapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+navigationSafeArgs = { id = "androidx.navigation.safeargs" ,version = "2.6.0" } # Добавьте Safe Args

@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottomSheet"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="@dimen/bottom_sheet_height"
     android:background="@drawable/bottom_sheet_rectangle"
     android:backgroundTint="@color/settingsBackground"
     app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
 
     <include
         android:id="@+id/iv_bottom_sheet_bar"
@@ -54,9 +53,9 @@
         android:layout_height="0dp"
         android:layout_marginStart="13dp"
         android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bt_add_new_playlist"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/bt_add_new_playlist" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

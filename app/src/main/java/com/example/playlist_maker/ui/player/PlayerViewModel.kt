@@ -31,12 +31,17 @@ class PlayerViewModel(
 
     private val _isFavorite = MutableLiveData<Boolean>()
     val isFavorite: LiveData<Boolean> get() = _isFavorite
-
     private val _isTrackInPlaylist = MutableLiveData<Pair<String, Boolean>>()
     val isTrackInPlaylist: LiveData<Pair<String, Boolean>> get() = _isTrackInPlaylist
 
     private val _playlists = MutableLiveData<List<Playlist>>()
     val playlists: LiveData<List<Playlist>> get() = _playlists
+
+    private val _addTrackResult = MutableLiveData<Pair<Boolean, String>>()
+    val addTrackResult: LiveData<Pair<Boolean, String>> get() = _addTrackResult
+
+    private val _currentPosition = MutableLiveData<Int>()
+    val currentPosition: LiveData<Int> get() = _currentPosition
 
     private var playbackJob: Job? = null
 
@@ -53,8 +58,13 @@ class PlayerViewModel(
 
     private fun checkIfFavorite(track: Track) {
         viewModelScope.launch {
-            val isFav = favoriteInteractor.isTrackFavorite(track.trackId)
-            _isFavorite.postValue(isFav)
+            runCatching {
+                favoriteInteractor.isTrackFavorite(track.trackId)
+            }.onSuccess { isFav ->
+                _isFavorite.postValue(isFav)
+            }.onFailure {
+                Log.e("PlayerViewModel", "Failed to check favorite status", it)
+            }
         }
     }
 
@@ -87,6 +97,7 @@ class PlayerViewModel(
             while (playPauseInteractor.isPlaying()) {
                 delay(300)
                 val currentTime = playPauseInteractor.getCurrentPosition()
+                _currentPosition.postValue(currentTime)
                 _playerState.postValue(
                     _playerState.value?.copy(currentPlayTime = formatTime(currentTime))
                 )
@@ -105,39 +116,47 @@ class PlayerViewModel(
 
     fun onFavoriteClicked() {
         viewModelScope.launch {
-            if (_isFavorite.value == true) {
-                favoriteInteractor.removeTrack(track.trackId)
-                _isFavorite.postValue(false)
-            } else {
-                favoriteInteractor.addTrack(track)
-                _isFavorite.postValue(true)
+            runCatching {
+                if (_isFavorite.value == true) {
+                    favoriteInteractor.removeTrack(track.trackId)
+                    false
+                } else {
+                    favoriteInteractor.addTrack(track)
+                    true
+                }
+            }.onSuccess { isFav ->
+                _isFavorite.postValue(isFav)
+            }.onFailure {
+                Log.e("PlayerViewModel", "Failed to update favorite status", it)
             }
         }
     }
 
     fun addTrackToPlaylist(trackId: Long, playlistId: Long) {
         viewModelScope.launch {
-            val success = playlistInteractor.addTrackToPlaylist(trackId, playlistId)
-            val playlistName = playlistInteractor.getPlaylistById(playlistId)?.name ?: "Playlist"
-            _isTrackInPlaylist.postValue(Pair(playlistName, success))
-            refreshPlaylists()
-        }
-    }
-
-    fun onImageSelected(playlistId: Long, uri: String) {
-        viewModelScope.launch {
-            val updated = playlistInteractor.updatePlaylistCover(playlistId, uri)
-            if (!updated) {
-                Log.e("PlayerViewModel", "Не удалось обновить обложку плейлиста")
+            runCatching {
+                val success = playlistInteractor.addTrackToPlaylist(trackId, playlistId)
+                val playlistName =
+                    playlistInteractor.getPlaylistById(playlistId)?.name ?: "Playlist"
+                Pair(success, playlistName)
+            }.onSuccess { result ->
+                _addTrackResult.postValue(result)
+                refreshPlaylists()
+            }.onFailure {
+                Log.e("PlayerViewModel", "Failed to add track to playlist", it)
             }
-            refreshPlaylists()
         }
     }
 
     fun refreshPlaylists() {
         viewModelScope.launch {
-            val playlists = playlistInteractor.getAllPlaylists().firstOrNull() ?: emptyList()
-            _playlists.postValue(playlists)
+            runCatching {
+                playlistInteractor.getAllPlaylists().firstOrNull()
+            }.onSuccess { playlists ->
+                _playlists.postValue(playlists.orEmpty())
+            }.onFailure {
+                Log.e("PlayerViewModel", "Failed to refresh playlists", it)
+            }
         }
     }
 
@@ -152,7 +171,7 @@ class PlayerViewModel(
 
     fun onDestroy() {
         stopUpdatingTime()
-        playPauseInteractor.release()
+        playPauseInteractor.reset()
     }
 
     override fun onCleared() {

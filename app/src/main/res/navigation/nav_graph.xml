@@ -6,32 +6,50 @@
     app:startDestination="@id/fragment_media_library">
 
     <fragment
-        android:id="@+id/favoritesTracksFragment"
-        android:name="com.example.playlist_maker.ui.media_library.favorites.FavoritesTracksFragment"
-        android:label="Favorites Tracks"
-        tools:layout="@layout/fragment_favorites_tracks">
-        <action
-            android:id="@+id/action_favoritesTracksFragment_to_playerActivity"
-            app:destination="@id/playerActivity" />
-        <argument
-            android:name="track"
-            app:argType="com.example.playlist_maker.domein.player.Track" />
-    </fragment>
-
-    <activity
-        android:id="@+id/playerActivity"
-        android:name="com.example.playlist_maker.ui.player.PlayerActivity"
-        tools:layout="@layout/activity_player" />
-
-    <fragment
         android:id="@+id/fragment_media_library"
         android:name="com.example.playlist_maker.ui.media_library.MediaLibraryFragment"
         android:label="Media Library"
         tools:layout="@layout/fragment_media_library">
         <action
+            android:id="@+id/action_fragment_media_library_to_favoritesTracksFragment"
+            app:destination="@id/favoritesTracksFragment" />
+        <action
             android:id="@+id/action_fragment_media_library_to_newPlaylistFragment"
             app:destination="@id/newPlaylistFragment" />
+        <action
+            android:id="@+id/action_favoritesFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/favoritesTracksFragment"
+        android:name="com.example.playlist_maker.ui.media_library.favorites.FavoritesTracksFragment"
+        android:label="Favorites Tracks"
+        tools:layout="@layout/fragment_favorites_tracks">
+        <action
+            android:id="@+id/action_favoritesTracksFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.example.playlist_maker.ui.player.PlayerFragment"
+        android:label="Player"
+        tools:layout="@layout/fragment_player">
+        <action
+            android:id="@+id/action_playerFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+        <argument
+            android:name="track"
+            app:argType="com.example.playlist_maker.domein.player.Track"
+            app:nullable="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newPlaylistFragment"
+        android:name="com.example.playlist_maker.ui.media_library.playlists.NewPlaylistFragment"
+        android:label="@string/new_playlist"
+        tools:layout="@layout/fragment_new_playlist" />
 
     <fragment
         android:id="@+id/fragment_playlists"
@@ -47,17 +65,15 @@
         android:id="@+id/fragment_search"
         android:name="com.example.playlist_maker.ui.search.SearchFragment"
         android:label="Search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragment_settings"
         android:name="com.example.playlist_maker.ui.settings.SettingsFragment"
         android:label="Settings"
         tools:layout="@layout/fragment_settings" />
-
-    <fragment
-        android:id="@+id/newPlaylistFragment"
-        android:name="com.example.playlist_maker.ui.media_library.playlists.NewPlaylistFragment"
-        android:label="@string/new_playlist"
-        tools:layout="@layout/fragment_new_playlist" />
 </navigation>

@@ -34,4 +34,8 @@
     <color name="unselected_color_menu">#1A1B22</color>
     <color name="nav_separator_color">#FFFFFF</color>
     <color name="ic_add_to_playlist_full">#F56B6C</color>
+    <color name="blue">#3772E7</color>
+    <color name="gray">#AEAFB4</color>
+    <color name="textColorHint_npl_focus">#3772E7</color>
+    <color name="textColorHint_npl_no_focus">#AEAFB4</color>
 </resources>

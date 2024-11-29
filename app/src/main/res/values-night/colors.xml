@@ -33,4 +33,6 @@
     <color name="unselected_color_menu">#FFFFFF</color>
     <color name="nav_separator_color">#AEAFB4</color>
     <color name="ic_add_to_playlist_full">#F56B6C</color>
+    <color name="textColorHint_npl_focus">#3772E7</color>
+    <color name="textColorHint_npl_no_focus">#FFFFFF</color>
 </resources>

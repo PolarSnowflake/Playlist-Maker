@@ -33,8 +33,9 @@ class PlaylistViewHolder(itemView: View, private val isCardMode: Boolean) :
                 .into(playlistImage)
         }
 
-        if (!isCardMode) {
-            playlistImage.scaleType = ImageView.ScaleType.CENTER_CROP
-        }
+        playlistImage.scaleType = ImageView.ScaleType.CENTER_CROP
+
+        playlistImage.setPadding(0, 0, 0, 0)
+        playlistImage.adjustViewBounds = false
     }
 }

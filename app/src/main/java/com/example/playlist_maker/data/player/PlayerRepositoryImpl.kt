@@ -48,9 +48,9 @@ class PlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerReposit
         }
     }
 
-    override fun release() {
+    override fun reset() {
         stopProgressUpdate()
-        mediaPlayer.release()
+        mediaPlayer.reset()
     }
 
     override fun isPlaying(): Boolean = mediaPlayer.isPlaying

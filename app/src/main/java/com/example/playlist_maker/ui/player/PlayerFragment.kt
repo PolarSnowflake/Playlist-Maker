@@ -31,6 +31,7 @@ class PlayerFragment : Fragment() {
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var playlistAdapter: PlaylistAdapter
+    private var expandAfterPlaylistCreation = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,7 +56,8 @@ class PlayerFragment : Fragment() {
         ) { _, bundle ->
             val isPlaylistCreated = bundle.getBoolean("isPlaylistCreated", false)
             if (isPlaylistCreated) {
-                refreshPlaylistsAndShowBottomSheet()
+                expandAfterPlaylistCreation = true
+                viewModel.refreshPlaylists()
             }
         }
     }
@@ -79,7 +81,8 @@ class PlayerFragment : Fragment() {
         }
 
         binding.addToPlaylist.setOnClickListener {
-            refreshPlaylistsAndShowBottomSheet()
+            viewModel.refreshPlaylists()
+            showBottomSheet(expanded = true)
         }
     }
 
@@ -113,15 +116,18 @@ class PlayerFragment : Fragment() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        if (binding.overlay.visibility != View.GONE) {
-                            binding.overlay.visibility = View.GONE
-                        }
+                        binding.overlay.visibility = View.GONE
                     }
 
-                    else -> {
-                        if (binding.overlay.visibility != View.VISIBLE) {
-                            binding.overlay.visibility = View.VISIBLE
-                            binding.overlay.alpha = 1f
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        binding.overlay.visibility = View.VISIBLE
+                        binding.overlay.alpha = 1f
+                    }
+
+                    BottomSheetBehavior.STATE_DRAGGING,
+                    BottomSheetBehavior.STATE_SETTLING -> {
+                        if (expandAfterPlaylistCreation) {
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         }
                     }
                 }
@@ -153,43 +159,45 @@ class PlayerFragment : Fragment() {
 
         viewModel.playlists.observe(viewLifecycleOwner) { playlists ->
             playlistAdapter.updatePlaylists(playlists)
-        }
-    }
-
-
-    private fun refreshPlaylistsAndShowBottomSheet() {
-        viewModel.refreshPlaylists()
-        viewModel.playlists.observe(viewLifecycleOwner) { playlists ->
-            playlistAdapter.updatePlaylists(playlists)
-            showBottomSheet()
-        }
-    }
-
-    private fun showBottomSheet() {
-        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-            if (binding.overlay.visibility != View.VISIBLE) {
-                binding.overlay.visibility = View.VISIBLE
-                binding.overlay.alpha = 1f
+            if (expandAfterPlaylistCreation) {
+                expandAfterPlaylistCreation = false
+                showBottomSheet(expanded = true)
             }
         }
     }
 
-    private fun hideBottomSheet() {
-        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+    private fun showBottomSheet(expanded: Boolean = false) {
+        bottomSheetBehavior.state = if (expanded) {
+            BottomSheetBehavior.STATE_EXPANDED
+        } else {
+            BottomSheetBehavior.STATE_HALF_EXPANDED
         }
+        binding.overlay.visibility = View.VISIBLE
+        binding.overlay.alpha = 1f
+    }
+
+    private fun hideBottomSheet() {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
     private fun addTrackToPlaylist(playlist: Playlist) {
         val trackId = viewModel.playerState.value?.track?.trackId
         if (trackId != null) {
-            viewModel.addTrackToPlaylist(trackId, playlist.id)
-            Toast.makeText(
-                requireContext(),
-                "Трек добавлен в плейлист: ${playlist.name}",
-                Toast.LENGTH_SHORT
-            ).show()
+            if (playlist.trackIds.contains(trackId)) {
+                Toast.makeText(
+                    requireContext(),
+                    "Трек уже добавлен в плейлист: ${playlist.name}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                viewModel.addTrackToPlaylist(trackId, playlist.id)
+                Toast.makeText(
+                    requireContext(),
+                    "Трек добавлен в плейлист: ${playlist.name}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                hideBottomSheet()
+            }
         } else {
             Toast.makeText(requireContext(), "Ошибка добавления трека", Toast.LENGTH_SHORT).show()
         }

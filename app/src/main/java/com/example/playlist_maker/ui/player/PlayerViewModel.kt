@@ -135,11 +135,17 @@ class PlayerViewModel(
     fun addTrackToPlaylist(trackId: Long, playlistId: Long) {
         viewModelScope.launch {
             runCatching {
-                val success = playlistInteractor.addTrackToPlaylist(trackId, playlistId)
-                val playlistName =
-                    playlistInteractor.getPlaylistById(playlistId)?.name ?: "Playlist"
-                Pair(success, playlistName)
+                val playlist = playlistInteractor.getPlaylistById(playlistId)
+                if (playlist?.trackIds?.contains(trackId) == true) {
+                    Pair(false, playlist.name)
+                } else {
+                    val success = playlistInteractor.addTrackToPlaylist(trackId, playlistId)
+                    val playlistName = playlist?.name ?: "Playlist"
+                    Pair(success, playlistName)
+                }
             }.onSuccess { result ->
+                if (!result.first) {
+                }
                 _addTrackResult.postValue(result)
                 refreshPlaylists()
             }.onFailure {

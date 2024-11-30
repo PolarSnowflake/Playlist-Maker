@@ -1,16 +1,16 @@
-package com.example.playlist_maker.ui.media_library
+package com.example.playlist_maker.ui.media_library.favorites
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlist_maker.R
 import com.example.playlist_maker.ui.search.TrackAdapter
 import com.example.playlist_maker.domein.player.Track
 import com.example.playlist_maker.databinding.FragmentFavoritesTracksBinding
-import com.example.playlist_maker.ui.player.PlayerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoritesTracksFragment : Fragment() {
@@ -69,9 +69,10 @@ class FavoritesTracksFragment : Fragment() {
     }
 
     private fun navigateToPlayer(track: Track) {
-        val intent = Intent(requireContext(), PlayerActivity::class.java)
-        intent.putExtra("track", track)
-        startActivity(intent)
+        val args = Bundle().apply {
+            putSerializable("track", track)
+        }
+        findNavController().navigate(R.id.action_favoritesFragment_to_playerFragment, args)
     }
 
     override fun onDestroyView() {

@@ -202,9 +202,13 @@ class PlayerFragment : Fragment() {
             Toast.makeText(requireContext(), "Ошибка добавления трека", Toast.LENGTH_SHORT).show()
         }
     }
-
     private fun openNewPlaylistScreen() {
-        val action = PlayerFragmentDirections.actionPlayerFragmentToNewPlaylistFragment()
+        val action = PlayerFragmentDirections.actionPlayerFragmentToNewPlaylistFragment(
+            0L, // playlistId для нового плейлиста
+            null,
+            null,
+            null
+        )
         findNavController().navigate(action)
     }
 

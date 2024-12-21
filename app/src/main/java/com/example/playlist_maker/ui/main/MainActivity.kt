@@ -32,7 +32,8 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.player_coordinator_layout,
                 R.id.newPlaylistFragment,
-                R.id.playerFragment -> {
+                R.id.playerFragment,
+                R.id.playlistMenuFragment -> {
 
                     binding.navSeparator.visibility = View.GONE
                     binding.navView.visibility = View.GONE

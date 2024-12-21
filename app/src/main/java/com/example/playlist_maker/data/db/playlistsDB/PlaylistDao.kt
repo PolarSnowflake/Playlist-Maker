@@ -9,6 +9,9 @@ interface PlaylistDao {
     fun getAllPlaylists(): Flow<List<PlaylistEntity>>
 
     @Query("SELECT * FROM playlists WHERE id = :id")
+    fun getPlaylistByIdFlow(id: Long): Flow<PlaylistEntity>
+
+    @Query("SELECT * FROM playlists WHERE id = :id")
     suspend fun getPlaylistById(id: Long): PlaylistEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -19,4 +22,7 @@ interface PlaylistDao {
 
     @Query("UPDATE playlists SET coverImagePath = :uri WHERE id = :playlistId")
     suspend fun updatePlaylistCover(playlistId: Long, uri: String)
+
+    @Query("DELETE FROM playlists WHERE id = :playlistId")
+    suspend fun deletePlaylistById(playlistId: Long)
 }

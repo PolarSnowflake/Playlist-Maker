@@ -38,4 +38,6 @@
     <color name="gray">#AEAFB4</color>
     <color name="textColorHint_npl_focus">#3772E7</color>
     <color name="textColorHint_npl_no_focus">#AEAFB4</color>
+    <color name="gray_white">#AEAFB4</color>
+    <color name="l_gray_white">#E6E8EB</color>
 </resources>

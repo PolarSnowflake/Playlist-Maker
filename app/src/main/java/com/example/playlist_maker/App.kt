@@ -6,6 +6,7 @@ import com.example.playlist_maker.data.settings.SharedPreferencesRepository
 import com.example.playlist_maker.di.appModule
 import com.example.playlist_maker.di.favoritesModule
 import com.example.playlist_maker.di.playerModule
+import com.example.playlist_maker.di.playlistMenuModule
 import com.example.playlist_maker.di.playlistsModule
 import com.example.playlist_maker.di.searchModule
 import com.example.playlist_maker.di.settingsModule
@@ -30,7 +31,8 @@ class App : Application() {
                 searchModule,
                 favoritesModule,
                 playerModule,
-                playlistsModule
+                playlistsModule,
+                playlistMenuModule
              ))
         }
 

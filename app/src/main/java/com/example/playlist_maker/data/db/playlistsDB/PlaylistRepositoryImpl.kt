@@ -1,5 +1,6 @@
 package com.example.playlist_maker.data.db.playlistsDB
 
+import android.util.Log
 import com.example.playlist_maker.data.db.playlistsDB.PlaylistConverter.toPlaylist
 import com.example.playlist_maker.data.db.playlistsDB.PlaylistConverter.toPlaylistEntity
 import com.example.playlist_maker.domein.playlist.Playlist
@@ -15,6 +16,7 @@ class PlaylistRepositoryImpl(private val dao: PlaylistDao) : PlaylistRepository 
     }
 
     override suspend fun updatePlaylist(playlist: Playlist) {
+        Log.d("PlaylistRepository", "Updating playlist: $playlist")
         val entity = playlist.toPlaylistEntity()
         dao.updatePlaylist(entity)
     }
@@ -50,5 +52,25 @@ class PlaylistRepositoryImpl(private val dao: PlaylistDao) : PlaylistRepository 
         val updatedPlaylist = playlist.copy(coverPath = uri)
         dao.updatePlaylist(updatedPlaylist.toPlaylistEntity())
         return true
+    }
+
+    override suspend fun deletePlaylistById(playlistId: Long) {
+        dao.deletePlaylistById(playlistId)
+    }
+
+    override suspend fun removeTrackFromPlaylist(trackId: Long, playlistId: Long) {
+        val playlist = dao.getPlaylistById(playlistId)?.toPlaylist()
+            ?: throw IllegalArgumentException("Playlist not found")
+
+        val updatedTrackIds = playlist.trackIds.filter { it != trackId }
+        val updatedPlaylist = playlist.copy(
+            trackIds = updatedTrackIds,
+            trackCount = updatedTrackIds.size
+        )
+        dao.updatePlaylist(updatedPlaylist.toPlaylistEntity())
+    }
+
+    override fun getPlaylistByIdFlow(id: Long): Flow<Playlist> {
+        return dao.getPlaylistByIdFlow(id).map { it.toPlaylist() }
     }
 }

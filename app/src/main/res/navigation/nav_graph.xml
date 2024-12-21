@@ -19,6 +19,33 @@
         <action
             android:id="@+id/action_favoritesFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_fragment_media_library_to_playlistMenuFragment"
+            app:destination="@id/playlistMenuFragment">
+            <argument
+                android:name="playlistId"
+                app:argType="long" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/playlistMenuFragment"
+        android:name="com.example.playlist_maker.ui.media_library.playlist_menu.PlaylistMenuFragment"
+        android:label="Playlist Menu">
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_playlistMenuFragment_to_playerFragment"
+            app:destination="@id/playerFragment">
+            <argument
+                android:name="track"
+                app:argType="com.example.playlist_maker.domein.player.Track"
+                app:nullable="false" />
+        </action>
+        <action
+            android:id="@+id/action_playlistMenuFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
     </fragment>
 
     <fragment
@@ -49,7 +76,23 @@
         android:id="@+id/newPlaylistFragment"
         android:name="com.example.playlist_maker.ui.media_library.playlists.NewPlaylistFragment"
         android:label="@string/new_playlist"
-        tools:layout="@layout/fragment_new_playlist" />
+        tools:layout="@layout/fragment_new_playlist">
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
+        <argument
+            android:name="name"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="description"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="coverPath"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragment_playlists"

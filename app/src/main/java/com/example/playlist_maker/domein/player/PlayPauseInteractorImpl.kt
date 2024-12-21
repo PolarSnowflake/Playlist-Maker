@@ -18,8 +18,8 @@ class PlayPauseInteractorImpl(private val repository: PlayerRepository) : PlayPa
         repository.pause()
     }
 
-    override fun release() {
-        repository.release()
+    override fun reset() {
+        repository.reset()
     }
 
     override fun isPlaying(): Boolean {

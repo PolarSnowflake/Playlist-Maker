@@ -11,11 +11,11 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker.R
 import com.example.playlist_maker.databinding.FragmentSearchBinding
 import com.example.playlist_maker.domein.player.Track
-import com.example.playlist_maker.ui.player.PlayerActivity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -50,7 +50,7 @@ class SearchFragment : Fragment() {
                 delay(300)
                 viewModel.addTrackToHistory(track)
                 searchHistoryTracks.hideHistory()
-                startPlayerActivity(track)
+                startPlayerFragment(track)
             }
         }
 
@@ -247,11 +247,10 @@ class SearchFragment : Fragment() {
         imm?.hideSoftInputFromWindow(binding.searchBar.windowToken, 0)
     }
 
-    // Переход на PlayerActivity
-    private fun startPlayerActivity(track: Track) {
-        val intent = Intent(requireContext(), PlayerActivity::class.java)
-        intent.putExtra("track", track)
-        startActivity(intent)
+    // Переход на PlayerFragment
+    private fun startPlayerFragment(track: Track) {
+        val action = SearchFragmentDirections.actionSearchFragmentToPlayerFragment(track)
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {

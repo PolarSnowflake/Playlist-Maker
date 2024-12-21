@@ -24,9 +24,15 @@
     <dimen name="player_height">32dp</dimen>
     <dimen name="player_text_size">12sp</dimen>
     <dimen name="player_text_size_22sp">22sp</dimen>
+    <dimen name="player_text_size_26sp">26sp</dimen>
     <dimen name="player_text_size_14sp">14sp</dimen>
+    <dimen name="player_text_size_16sp">16sp</dimen>
     <dimen name="player_text_size_12sp">12sp</dimen>
     <dimen name="player_image_corner_radius">8dp</dimen>
     <dimen name="media_library_text_size_26sp">26sp</dimen>
     <dimen name="media_library_text_size_16sp">16sp</dimen>
+    <dimen name="new_playlist_placeholder_image_size">100dp</dimen>
+    <dimen name="bottom_sheet_height">505dp</dimen>
+    <dimen name="playlist_image_size">160dp</dimen>
+    <dimen name="bottom_sheet_image_size">45dp</dimen>
 </resources>

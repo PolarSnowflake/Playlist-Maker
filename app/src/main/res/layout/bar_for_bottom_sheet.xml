@@ -7,9 +7,7 @@
         android:id="@+id/iv_bottom_sheet_bar"
         android:layout_width="50dp"
         android:layout_height="4dp"
-        android:src="@drawable/bottom_sheet_rectangle"
-        android:background="@color/settingsText"
         android:layout_marginTop="8dp"
-        />
+        android:background="@drawable/bottom_sheet_rec" />
 
 </FrameLayout>

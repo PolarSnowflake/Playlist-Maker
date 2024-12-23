@@ -88,7 +88,7 @@ class PlaylistMenuViewModel(
         _shareText.postValue(shareContent)
     }
 
-    private fun formatTrackTime(trackTimeMillis: Long): String {
+    fun formatTrackTime(trackTimeMillis: Long): String {
         val seconds = trackTimeMillis / 1000 % 60
         val minutes = trackTimeMillis / (1000 * 60)
         return String.format("%02d:%02d", minutes, seconds)

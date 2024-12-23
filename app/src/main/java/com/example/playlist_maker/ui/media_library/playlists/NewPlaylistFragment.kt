@@ -1,7 +1,6 @@
 package com.example.playlist_maker.ui.media_library.playlists
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
@@ -187,30 +186,7 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun handleBackPress() {
-        if (hasUnsavedChanges()) {
-            showExitDialog()
-        } else {
-            parentFragmentManager.popBackStack()
-        }
-    }
-
-    private fun hasUnsavedChanges(): Boolean {
-        val isNameFilled = !binding.ietPlaylistName.text.isNullOrBlank()
-        val isDescriptionFilled = !binding.ietDesctiption.text.isNullOrBlank()
-        val isImageSelected = selectedImageUri != null
-
-        return isNameFilled || isDescriptionFilled || isImageSelected
-    }
-
-    private fun showExitDialog() {
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.exit_creation_qw))
-            .setMessage(getString(R.string.exit_creation_message))
-            .setPositiveButton(getString(R.string.finish)) { _, _ ->
-                parentFragmentManager.popBackStack()
-            }
-            .setNegativeButton(getString(R.string.cancel), null)
-            .show()
+        parentFragmentManager.popBackStack()
     }
 
     private fun saveImageToAppStorage(imageUri: Uri?): Uri? {
@@ -241,8 +217,16 @@ class NewPlaylistFragment : Fragment() {
         val description = binding.ietDesctiption.text?.toString() ?: ""
         val savedImageUri = saveImageToAppStorage(selectedImageUri)
 
-        Log.d("NewPlaylistFragment", "New playlist details: name=$name, description=$description, coverPath=$savedImageUri")
+        Log.d(
+            "NewPlaylistFragment",
+            "New playlist details: name=$name, description=$description, coverPath=$savedImageUri"
+        )
         viewModel.createPlaylist(name, description, savedImageUri)
+        val bundle = Bundle().apply {
+            putBoolean("isPlaylistCreated", true)
+        }
+        parentFragmentManager.setFragmentResult("playlist_result", bundle)
+        findNavController().navigateUp()
     }
 
     @SuppressLint("StringFormatInvalid")

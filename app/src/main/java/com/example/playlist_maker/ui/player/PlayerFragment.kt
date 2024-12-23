@@ -58,6 +58,7 @@ class PlayerFragment : Fragment() {
             if (isPlaylistCreated) {
                 expandAfterPlaylistCreation = true
                 viewModel.refreshPlaylists()
+                showBottomSheet()
             }
         }
     }

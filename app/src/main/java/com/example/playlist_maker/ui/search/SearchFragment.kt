@@ -1,6 +1,5 @@
 package com.example.playlist_maker.ui.search
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -83,15 +82,11 @@ class SearchFragment : Fragment() {
                     binding.recyclerView.visibility = View.GONE
                     hideErrorPlaceholder()
                     hideUpdateButton()
-                    binding.searchHint.visibility =
-                        View.VISIBLE // Показываем searchHint при пустом тексте
                     if (binding.searchBar.hasFocus()) {
                         searchHistoryTracks.loadSearchHistory() // Показываем историю, если есть
                     }
                 } else {
                     searchHistoryTracks.hideHistory() // Скрываем историю при вводе текста
-                    binding.searchHint.visibility =
-                        View.GONE // Скрываем searchHint при вводе текста
                     debounceSearch(s.toString())
                 }
             }
@@ -106,7 +101,6 @@ class SearchFragment : Fragment() {
                     hideErrorPlaceholder()
                     hideUpdateButton()
                     if (binding.searchBar.hasFocus()) {
-                        binding.searchHint.visibility = View.VISIBLE
                         searchHistoryTracks.loadSearchHistory()
                     }
                 }
@@ -116,11 +110,9 @@ class SearchFragment : Fragment() {
         // Отслеживание фокуса
         binding.searchBar.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.searchBar.text.isEmpty()) {
-                binding.searchHint.visibility = View.VISIBLE
                 searchHistoryTracks.loadSearchHistory()
                 binding.recyclerView.visibility = View.GONE
             } else {
-                binding.searchHint.visibility = View.GONE
                 searchHistoryTracks.hideHistory()
             }
         }
@@ -145,8 +137,6 @@ class SearchFragment : Fragment() {
             trackAdapter.updateTracks(emptyList())
             hideErrorPlaceholder()
             hideUpdateButton()
-            binding.searchHint.visibility =
-                View.VISIBLE // Показываем searchHint после очистки текста
             searchHistoryTracks.loadSearchHistory() // Загрузка истории после очистки текста
         }
 
@@ -163,6 +153,7 @@ class SearchFragment : Fragment() {
             if (tracks.isNotEmpty()) {
                 trackAdapter.updateTracks(tracks)  // Обновляем треки
                 binding.recyclerView.visibility = View.VISIBLE
+                hideErrorPlaceholder()
             } else {
                 showNoResultsPlaceholder()  // Показываем плейсхолдер, если результаты пусты
             }
@@ -175,7 +166,13 @@ class SearchFragment : Fragment() {
 
         // Ошибка
         viewModel.error.observe(viewLifecycleOwner) { isError ->
-            if (isError) showErrorPlaceholder()
+            if (isError) {
+                showErrorPlaceholder()
+            } else {
+                if (viewModel.searchResults.value.isNullOrEmpty()) {
+                    showNoResultsPlaceholder()
+                }
+            }
         }
     }
 

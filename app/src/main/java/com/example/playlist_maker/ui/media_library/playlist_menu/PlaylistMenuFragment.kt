@@ -105,10 +105,12 @@ class PlaylistMenuFragment : Fragment() {
         }
 
         viewModel.tracksLiveData.observe(viewLifecycleOwner) { tracks ->
-            if (tracks.isNotEmpty()) {
+            val sortedTracks = tracks.reversed()
+
+            if (sortedTracks.isNotEmpty()) {
                 binding.rvTrackList.visibility = View.VISIBLE
                 binding.noTracksMassage.visibility = View.GONE
-                setupTrackList(tracks)
+                setupTrackList(sortedTracks)
             } else {
                 binding.rvTrackList.visibility = View.GONE
                 binding.noTracksMassage.visibility = View.VISIBLE
@@ -132,8 +134,7 @@ class PlaylistMenuFragment : Fragment() {
         binding.playlistName.text = playlist.name
         binding.plName.text = playlist.name
 
-        binding.playlistDescription.text =
-            playlist.description.ifEmpty { getString(R.string.no_description) }
+        binding.playlistDescription.text = playlist.description.ifEmpty { "" }
 
         val tracks = viewModel.tracksLiveData.value.orEmpty()
         val totalDurationMinutes = tracks.sumOf { (it.trackTime / 1000 / 60).toInt() }
@@ -263,9 +264,23 @@ class PlaylistMenuFragment : Fragment() {
     }
 
     private fun shareText(text: String) {
+        val playlist = viewModel.playlistLiveData.value
+        val tracks = viewModel.tracksLiveData.value.orEmpty()
+        val sortedTracks = tracks.reversed()
+        val trackList = sortedTracks.mapIndexed { index, track ->
+            "${index + 1}. ${track.artistName} - ${track.trackName} (${viewModel.formatTrackTime(track.trackTime)})"
+        }.joinToString("\n")
+
+        val shareText = """
+        Название плейлиста: ${playlist?.name}
+        Описание: ${playlist?.description ?: ""}
+        Количество треков: ${tracks.size}
+        $trackList
+    """.trimIndent()
+
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, text)
+            putExtra(Intent.EXTRA_TEXT, shareText)
         }
         startActivityForResult(
             Intent.createChooser(intent, getString(R.string.share)),

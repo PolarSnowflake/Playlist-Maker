@@ -53,17 +53,6 @@
             android:textColorHint="@color/searchBarTextColorHint"
             android:textCursorDrawable="@drawable/search_cursor_color" />
 
-        <TextView
-            android:id="@+id/searchHint"
-            style="@style/SearchHintTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/searchBar"
-            android:text="@string/search_hint_text"
-            android:textColor="@color/placeholderMessageColor"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
         <ImageButton
             android:id="@+id/clear_button"
             style="@style/ClearButton"

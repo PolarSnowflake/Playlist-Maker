@@ -1,5 +1,6 @@
 package com.example.playlist_maker.ui.search
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,8 @@ import com.example.playlist_maker.domein.player.Track
 import com.example.playlist_maker.domein.search.SearchHistoryInteractor
 import com.example.playlist_maker.domein.search.SearchTracksInteractor
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 class SearchViewModel(
     private val searchTracksInteractor: SearchTracksInteractor,
@@ -39,10 +42,24 @@ class SearchViewModel(
             searchTracksInteractor.searchTracks(query).collect { result ->
                 _loading.postValue(false)
                 result.onSuccess { tracks ->
-                    _searchResults.postValue(tracks)
-                }.onFailure {
-                    _searchResults.postValue(emptyList())
-                    _error.postValue(true)
+                    if (tracks.isEmpty()) {
+                        _searchResults.postValue(emptyList())
+                        _error.postValue(false)
+                    } else {
+                        _searchResults.postValue(tracks)
+                        _error.postValue(false)
+                    }
+                }.onFailure { exception ->
+                    if (exception is IOException) {
+                        _searchResults.postValue(emptyList())
+                        _error.postValue(true)
+                    } else if (exception is HttpException && exception.code() == 404) {
+                        _searchResults.postValue(emptyList())
+                        _error.postValue(false)
+                    } else {
+                        _searchResults.postValue(emptyList())
+                        _error.postValue(true)
+                    }
                 }
             }
         }

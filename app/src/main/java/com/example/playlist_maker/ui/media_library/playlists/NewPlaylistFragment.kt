@@ -94,12 +94,14 @@ class NewPlaylistFragment : Fragment() {
 
                     binding.ietPlaylistName.setText(playlist.name)
                     binding.ietDesctiption.setText(playlist.description)
+
+                    val coverUrl = playlist.coverPath
                     Glide.with(this)
-                        .load(playlist.coverPath ?: R.drawable.new_playlist_placeholder)
+                        .load(coverUrl.takeIf { it.isNotEmpty() } ?: R.drawable.placeholder_player)
                         .into(binding.ivNewPlaylistImage)
 
                     // Сохранение текущего плейлиста
-                    selectedImageUri = Uri.parse(playlist.coverPath)
+                    selectedImageUri = Uri.parse(coverUrl.takeIf { it.isNotEmpty() } ?: "")
                 } else {
                     Log.e("NewPlaylistFragment", "Failed to load playlist with ID: $playlistId")
                     Toast.makeText(

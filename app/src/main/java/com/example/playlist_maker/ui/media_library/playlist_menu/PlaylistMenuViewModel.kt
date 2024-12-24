@@ -40,10 +40,10 @@ class PlaylistMenuViewModel(
         }
     }
 
-    private fun loadTracks(trackIds: List<Long>) {
+    fun loadTracks(trackIds: List<Long>) {
         viewModelScope.launch {
             interactor.getTracksFromPlaylist(trackIds)
-                .catch { _tracksLiveData.postValue(emptyList()) }
+                .catch { e -> _tracksLiveData.postValue(emptyList()) }
                 .collect { tracks ->
                     _tracksLiveData.postValue(tracks)
                 }

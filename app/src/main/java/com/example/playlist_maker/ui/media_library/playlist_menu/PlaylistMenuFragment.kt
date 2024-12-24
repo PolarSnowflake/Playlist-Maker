@@ -101,11 +101,13 @@ class PlaylistMenuFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.playlistLiveData.observe(viewLifecycleOwner) { playlist ->
-            playlist?.let { updatePlaylistUI(it) }
+            playlist?.let {
+                Log.d("PlaylistMenuFragment", "Playlist loaded: ${playlist.name}")
+                updatePlaylistUI(it) }
         }
 
         viewModel.tracksLiveData.observe(viewLifecycleOwner) { tracks ->
-            val sortedTracks = tracks.reversed()
+            val sortedTracks = tracks.asReversed()
 
             if (sortedTracks.isNotEmpty()) {
                 binding.rvTrackList.visibility = View.VISIBLE

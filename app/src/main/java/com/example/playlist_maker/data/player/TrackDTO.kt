@@ -9,12 +9,14 @@ data class TrackDTO(
     val trackTimeMillis: Long,
     val artworkUrl100: String,
     val collectionName: String?,
-    val releaseDate: String,
-    val primaryGenreName: String,
-    val country: String,
-    val previewUrl: String
+    val releaseDate: String?,
+    val primaryGenreName: String?,
+    val country: String?,
+    val previewUrl: String?
 ) {
     fun toDomain(): Track {
+        val safeReleaseDate = releaseDate ?: "Unknown"
+        val safePreviewUrl = previewUrl ?: ""
         return Track(
             trackId = this.trackId,
             trackName = this.trackName,
@@ -22,10 +24,10 @@ data class TrackDTO(
             trackTime = this.trackTimeMillis,
             artworkUrl100 = this.artworkUrl100,
             collectionName = this.collectionName,
-            releaseDate = this.releaseDate,
-            primaryGenreName = this.primaryGenreName,
-            country = this.country,
-            previewUrl = this.previewUrl
+            releaseDate = safeReleaseDate,
+            primaryGenreName = this.primaryGenreName ?: "Unknown",
+            country = this.country ?: "Unknown",
+            previewUrl = safePreviewUrl
         )
     }
 }

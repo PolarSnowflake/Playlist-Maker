@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlist_maker.R
 import com.example.playlist_maker.databinding.FragmentPlaylistsBinding
 import com.example.playlist_maker.domein.playlist.Playlist
+import com.example.playlist_maker.ui.media_library.MediaLibraryFragmentDirections
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
@@ -38,8 +39,18 @@ class PlaylistsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        observeViewModel()
         setupCreatePlaylistButton()
+        observeViewModel()
+    }
+
+    private fun openNewPlaylistScreen() {
+        val bundle = Bundle().apply {
+            putLong("playlistId", 0L) // Новый плейлист
+            putString("name", null)
+            putString("description", null)
+            putString("coverPath", null)
+        }
+        findNavController().navigate(R.id.newPlaylistFragment, bundle)
     }
 
     private fun setupRecyclerView() {
@@ -61,12 +72,15 @@ class PlaylistsFragment : Fragment() {
 
     private fun setupCreatePlaylistButton() {
         binding.createPlaylistButton.setOnClickListener {
-            findNavController().navigate(R.id.action_fragment_media_library_to_newPlaylistFragment)
+            openNewPlaylistScreen()
         }
     }
 
     private fun onPlaylistClicked(playlist: Playlist) {
-        //
+        val parentNavController = requireParentFragment().findNavController()
+        val action =
+            MediaLibraryFragmentDirections.actionFragmentMediaLibraryToPlaylistMenuFragment(playlist.id)
+        parentNavController.navigate(action)
     }
 
     override fun onDestroyView() {

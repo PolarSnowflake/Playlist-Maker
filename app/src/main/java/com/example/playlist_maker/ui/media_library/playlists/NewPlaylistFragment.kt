@@ -1,11 +1,12 @@
 package com.example.playlist_maker.ui.media_library.playlists
 
-import android.app.AlertDialog
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +15,12 @@ import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.playlist_maker.R
 import com.example.playlist_maker.databinding.FragmentNewPlaylistBinding
+import com.example.playlist_maker.domein.playlist.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
@@ -26,6 +31,8 @@ class NewPlaylistFragment : Fragment() {
 
     private val viewModel: NewPlaylistViewModel by viewModel()
     private var selectedImageUri: Uri? = null
+
+    private val args: NewPlaylistFragmentArgs by navArgs()
 
     private val imagePickerLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -48,6 +55,13 @@ class NewPlaylistFragment : Fragment() {
         setupListeners()
         setTextInputLayoutColors()
 
+        val playlistId = arguments?.getLong("playlistId", 0L) ?: 0L
+        val name = arguments?.getString("name")
+        val description = arguments?.getString("description")
+        val coverPath = arguments?.getString("coverPath")
+
+        handleIncomingPlaylist(playlistId, name, description, coverPath)
+
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             handleBackPress()
         }
@@ -58,6 +72,50 @@ class NewPlaylistFragment : Fragment() {
         super.onDestroyView()
     }
 
+    private fun handleIncomingPlaylist(
+        playlistId: Long,
+        name: String?,
+        description: String?,
+        coverPath: String?
+    ) {
+        if (playlistId == 0L) {
+            // Новый плейлист
+            binding.btnBack.title = getString(R.string.new_playlist)
+            binding.btnCreatePlaylist.text = getString(R.string.create_playlist)
+        } else {
+            // Редактирование
+            binding.btnBack.title = getString(R.string.edit_playlist)
+            binding.btnCreatePlaylist.text = getString(R.string.save)
+
+            // Загрузка плейлиста из базы
+            viewModel.getPlaylistById(playlistId).observe(viewLifecycleOwner) { playlist ->
+                if (playlist != null) {
+                    Log.d("NewPlaylistFragment", "Loaded playlist for editing: $playlist")
+
+                    binding.ietPlaylistName.setText(playlist.name)
+                    binding.ietDesctiption.setText(playlist.description)
+
+                    val coverUrl = playlist.coverPath
+                    Glide.with(this)
+                        .load(coverUrl.takeIf { it.isNotEmpty() } ?: R.drawable.placeholder_player)
+                        .into(binding.ivNewPlaylistImage)
+
+                    // Сохранение текущего плейлиста
+                    selectedImageUri = Uri.parse(coverUrl.takeIf { it.isNotEmpty() } ?: "")
+                } else {
+                    Log.e("NewPlaylistFragment", "Failed to load playlist with ID: $playlistId")
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.error_loading_playlist),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    findNavController().popBackStack()
+                }
+            }
+        }
+    }
+
+    @SuppressLint("StringFormatInvalid")
     private fun setupListeners() {
         binding.btnBack.setOnClickListener {
             handleBackPress()
@@ -78,28 +136,39 @@ class NewPlaylistFragment : Fragment() {
         })
 
         binding.btnCreatePlaylist.setOnClickListener {
-            val name = binding.ietPlaylistName.text?.toString()?.trim() ?: ""
-            if (name.isEmpty()) {
-                Toast.makeText(
-                    requireContext(),
-                    "Название плейлиста не может быть пустым",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return@setOnClickListener
+            val playlistId = args.playlistId
+            if (playlistId != 0L) {
+                // Загрузка текущего плейлиста из базы
+                viewModel.getPlaylistById(playlistId).observe(viewLifecycleOwner) { playlist ->
+                    if (playlist != null) {
+                        Log.d("NewPlaylistFragment", "Loaded playlist for update: $playlist")
+
+                        val updatedPlaylist = playlist.copy(
+                            name = binding.ietPlaylistName.text.toString(),
+                            description = binding.ietDesctiption.text.toString(),
+                            coverPath = selectedImageUri?.toString() ?: playlist.coverPath,
+                            trackIds = playlist.trackIds, // Сохраняем текущие треки
+                            trackCount = playlist.trackIds.size
+                        )
+
+                        Log.d("NewPlaylistFragment", "Updating playlist: $updatedPlaylist")
+                        viewModel.updatePlaylist(updatedPlaylist)
+
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.playlist_updated, updatedPlaylist.name),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        findNavController().popBackStack()
+                    } else {
+                        Log.e("NewPlaylistFragment", "Failed to load playlist for ID: $playlistId")
+                    }
+                }
+            } else {
+                Log.d("NewPlaylistFragment", "Creating new playlist")
+                createPlaylist()
             }
-            val description = binding.ietDesctiption.text?.toString() ?: ""
-            val savedImageUri = saveImageToAppStorage(selectedImageUri)
-
-            viewModel.createPlaylist(name, description, savedImageUri)
-
-            Toast.makeText(requireContext(), "Плейлист \"$name\" создан", Toast.LENGTH_SHORT).show()
-
-            parentFragmentManager.setFragmentResult(
-                "playlist_result",
-                Bundle().apply { putBoolean("isPlaylistCreated", true) }
-            )
-
-            parentFragmentManager.popBackStack()
         }
 
         updateCreateButtonState()
@@ -119,30 +188,7 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun handleBackPress() {
-        if (hasUnsavedChanges()) {
-            showExitDialog()
-        } else {
-            parentFragmentManager.popBackStack()
-        }
-    }
-
-    private fun hasUnsavedChanges(): Boolean {
-        val isNameFilled = !binding.ietPlaylistName.text.isNullOrBlank()
-        val isDescriptionFilled = !binding.ietDesctiption.text.isNullOrBlank()
-        val isImageSelected = selectedImageUri != null
-
-        return isNameFilled || isDescriptionFilled || isImageSelected
-    }
-
-    private fun showExitDialog() {
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.exit_creation_qw))
-            .setMessage(getString(R.string.exit_creation_message))
-            .setPositiveButton(getString(R.string.finish)) { _, _ ->
-                parentFragmentManager.popBackStack()
-            }
-            .setNegativeButton(getString(R.string.cancel), null)
-            .show()
+        parentFragmentManager.popBackStack()
     }
 
     private fun saveImageToAppStorage(imageUri: Uri?): Uri? {
@@ -165,6 +211,48 @@ class NewPlaylistFragment : Fragment() {
             e.printStackTrace()
             null
         }
+    }
+
+    @SuppressLint("StringFormatInvalid")
+    private fun createPlaylist() {
+        val name = binding.ietPlaylistName.text?.toString()?.trim() ?: ""
+        val description = binding.ietDesctiption.text?.toString() ?: ""
+        val savedImageUri = saveImageToAppStorage(selectedImageUri)
+
+        Log.d(
+            "NewPlaylistFragment",
+            "New playlist details: name=$name, description=$description, coverPath=$savedImageUri"
+        )
+        viewModel.createPlaylist(name, description, savedImageUri)
+        val bundle = Bundle().apply {
+            putBoolean("isPlaylistCreated", true)
+        }
+        parentFragmentManager.setFragmentResult("playlist_result", bundle)
+        findNavController().navigateUp()
+    }
+
+    @SuppressLint("StringFormatInvalid")
+    private fun updatePlaylist(originalPlaylist: Playlist) {
+        // Сохранение текущих треков
+        val updatedPlaylist = originalPlaylist.copy(
+            name = binding.ietPlaylistName.text.toString(),
+            description = binding.ietDesctiption.text.toString(),
+            coverPath = selectedImageUri?.toString() ?: originalPlaylist.coverPath,
+            trackIds = originalPlaylist.trackIds,
+            trackCount = originalPlaylist.trackIds.size
+        )
+
+        Log.d("NewPlaylistFragment", "Updating playlist: $updatedPlaylist")
+
+        viewModel.updatePlaylist(updatedPlaylist)
+
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.playlist_updated, updatedPlaylist.name),
+            Toast.LENGTH_SHORT
+        ).show()
+
+        findNavController().popBackStack()
     }
 
     private fun setTextInputLayoutColors() {
